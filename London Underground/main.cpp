@@ -4,7 +4,6 @@
 #include <cstring>
 using namespace std;
 
-/* This code illustrates the use of the pre-supplied helper functions and the functions that you are supposed to write.*/
 int main() {
 	char** map;
 	int height, width;

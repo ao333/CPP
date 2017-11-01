@@ -8,9 +8,7 @@
 #include <iostream>
 using namespace std;
 
-/* You are pre-supplied with the functions below. Add your own function definitions to the end of this file. */
-
-/* internal helper function which gets the dimensions of a map */
+/* function which gets the dimensions of a map */
 bool get_map_dimensions(const char* filename, int& height, int& width) {
 	char line[512];
 	height = width = 0;
@@ -28,7 +26,7 @@ bool get_map_dimensions(const char* filename, int& height, int& width) {
 	return false;
 }
 
-/* internal helper function which allocates a dynamic 2D array */
+/* function which allocates a dynamic 2D array */
 char** allocate_2D_array(int rows, int columns) {
 	char** m = new char* [rows];
 
@@ -40,14 +38,14 @@ char** allocate_2D_array(int rows, int columns) {
 	return m;
 }
 
-/* internal helper function which deallocates a dynamic 2D array */
+/* function which deallocates a dynamic 2D array */
 void deallocate_2D_array(char** m, int rows) {
 	for(int r = 0; r < rows; r++)
 		delete [] m[r];
 	delete [] m;
 }
 
-/* pre-supplied function to load a tube map from a file*/
+/* function to load a tube map from a file*/
 char** load_map(const char* filename, int& height, int& width) {
 	bool success = get_map_dimensions(filename, height, width);
 
@@ -67,7 +65,7 @@ char** load_map(const char* filename, int& height, int& width) {
 	return m;
 }
 
-/* pre-supplied function to print the tube map */
+/* function to print the tube map */
 void print_map(char** m, int height, int width) {
 
 	cout << setw(2) << " " << " ";
@@ -89,7 +87,7 @@ void print_map(char** m, int height, int width) {
 	}
 }
 
-/* pre-supplied helper function to report the errors encountered in Question 3 */
+/* function to report the errors encountered in Question 3 */
 const char* error_description(int code) {
 	switch(code) {
 	case ERROR_START_STATION_INVALID:
@@ -110,7 +108,7 @@ const char* error_description(int code) {
 	return "Unknown error";
 }
 
-/* presupplied helper function for converting string to Direction enum */
+/* function for converting string to Direction enum */
 Direction string_to_direction(const char* token) {
 	const char* strings[] = {"N", "S", "W", "E", "NE", "NW", "SE", "SW"};
 	for(int n = 0; n < 8; n++) {
