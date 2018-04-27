@@ -1,6 +1,3 @@
-.vs/
-Debug/
-*.sln
-*.vcxproj
-*.filters
-*.user
+.idea/
+*.config.js
+*.DS_Store
