@@ -1,0 +1,181 @@
+1a
+Model network as layered stack
+  Layer N provides well-defined service to Layer N+1
+  Layer N uses Layer N-1 for communication
+Layering provides modularity
+  Layers do not process data from higher layers
+  May replace implementation of layers
+But too many layers lead to inefficiency
+
+b
+Unacknowledged connectionless service
+  Independent frames with no logical connection
+  No recovery from loss but fast
+  Common in LANs using reliable channels
+Acknowledged connectionless service
+  Each frame is acknowledged
+  Good for unreliable channels such as wireless
+  Out of order delivery possible
+Acknowledged connection-oriented service
+  Connection established before data is sent
+  Each frame numbered and guaranteed to be delivered exactly once and in order
+  Provides reliable bit stream
+Provide error detection and correction
+  Physical layer may introduce errors by adding, removing, or modifying bits
+
+c
+i) 2 * length / transmission speed <= frame size / link data rate
+2 * [3 (4 segments = 3 repeaters) * 3 (3us delay) + 2000m / 200m/us <= frame size / 10 (10^6bps/1s/10^6us = 10Mbus)
+2*(3*3+2000/200)*10=380bits
+
+ii)
+Preamble - Start Synchronisation - 7 bytes: 101010...
+SFD - Start of Frame Delimiter - 1 byte: 1010 1011
+DA - Destination address - 6 bytes: CE:54:58:17:7B:99
+SA - Source Address - 6 bytes: CE:46:CF:C5:08:AB
+Length - 2 bytes: 2
+Data - 0-1500 bytes (We used 2): 0100 1000 0101 0111
+Padding 0-46 (46-2=44): 44 bytes
+FCS 4: 4 bytes of 0
+
+iii) 2 Physical Layer:P.12-13
+
+2a
+i)
+Distance Vector
+Router maintains table of distances (vectors)
+  Usually hops/delay/queue length to destination network
+  Periodically exchanges this information with neighbours
+  Re-computes distance and updates its tables
+Poor efficiency
+  Slow to converge after changes (especially ”bad news”), Main reason for its demise
+  Count-to-infinity problem
+  Distance vectors increase linearly with network size and may not fit inside packet
+Route finding suboptimal
+  Only considers delay or hop count not bandwidth of links
+  Routing tables do not include paths
+
+Link State
+Each router maintains (partial) map of network
+  Consists of more than just neighbours
+  Includes cost metrics (e.g. distance, delay, bandwidth, cost)
+Properties
+  Faster convergence and more reliable
+  Less bandwidth intensive than distance vector routing but more complex and memory/CPU intensive
+Variants used today: IS-IS (Intermediate System to Intermediate System) and OSPF (Open Shortest Path First)
+Each router does the following:
+  Discover identities of all neighbours through HELLO packets
+  Set/measure metric of link to neighbours (automatic or set by administrator)
+  Send this information to all other routers (Link State packet)
+  Also, receive Link State packets from other routers
+  Compute shortest path to every other router using Dijkstra’s algorithm
+When link state changes
+  Notification packet flooded throughout network
+  All routers re-compute routes
+
+ii) Link State because of fast convergence, optimal pathfinding, better performance scaling, and no count-to-infiinity
+
+iii) BGP (Path Vector): Each entry in the routing table contains the next router, path and destination network
+
+b
+i)
+   A  B  C  D  E  F
+A  0  4  ?  ?  ?  ?
+B  4  0  2  3  ?  ?
+C  ?  2  0  2  7  ? 
+D  ?  3  2  0  ?  8
+E  ?  ?  7  ?  0  4 
+F  ?  ?  ?  8  4  0
+ii)
+   A  B  C  D  E  F
+A  0  4  6  7  ?  ?
+B  4  0  2  3  9  11
+C  6  2  0  2  7  10 
+D  7  3  2  0  9  8
+E  ?  9  7  9  0  4 
+F  ?  11 10 8  4  0
+iii)
+   A  B  C  D  E  F
+A  0  4  6  7  13 15
+B  4  0  2  3  9  11
+C  6  2  0  2  7  10 
+D  7  3  2  0  9  8
+E  13 9  7  9  0  4 
+F  15 11 10 8  4  0
+
+c i)
+0 A B C
+A 0 2 5
+B 2 0 3
+C 5 3 0
+Down 1
+  A B C
+A 0 2 2+3=5
+B 2 0 2+5=7
+Down 2
+  A B C
+A 0 2 2+7=9
+B 2 0 2+9=11
+Down 3
+  A B C
+A 0 2 2+11=13
+B 2 0 2+13=15
+
+ii) Use link state routing
+Define INF to be the network diameter + 1, i.e. 4 in this example
+Include the paths taken in the distance vector messages (which is what BGP does)
+
+3b
+public interface BusBroker extends UnicastRemoteObject implements IBusbroker {
+  public BusBroker() throws RemoteException { super(); }
+  public static void main(String args[]) {
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    Registry r = Locateregistry.getRegistry();
+    try {
+      iReport IBusBroker = new BusBroker();
+      r.rebind("rmi://URL/BBServ",BB);
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+
+  Registration[] Reg; int companyID;
+  boolean registerBusRoute(string bus, string from, string to, string url) {
+    Registration r = new Registration(bus,from,to,url)
+    Reg[companyID++] = r;
+  }
+
+  int minPrice;
+  boolean makeCheapestBooking(string from, string to, string date) {
+    try{
+      Registry r = LocateRegistry.getRegistry("URL");
+      iBusCompany BC = (iBusCompany) BC.lookup("rmi://URL/BCServ",R);
+      IManageBookings MB = (iManageBookings) BC.lookup("rmi://URL/MBServ",R);
+      for (i=0; i<Reg.size(); i++)
+        if(from==BC.quotePrice.from && to==BC.quotePrice.to && to==BC.quotePrice.to && minPrice<BC.quotePrice){
+          MB.book(from,to,date);
+          minprice = BC.quotePrice;
+        }
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+}
+
+c
+public interface BusCompany extends UnicastRemoteObject implements IBusCompany {
+  public BusBroker() throws RemoteException { super(); }
+  public static void main(String args[]) {
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    Registry r = Locateregistry.getRegistry();
+    try {
+      iReport IBusCompany = new BusCompany();
+      r.rebind("rmi://URL/BCServ",BC);
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+
+  float quotePrice(string from, string to, string date){
+    int PricingFactor;
+    try{
+      Registry r = LocateRegistry.getRegistry("URL");
+      IManageBookings MB = (iManageBookings) BC.lookup("rmi://URL/MBServ",R);
+      return MB.bookings(from,to,date)*PricingFactor;
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+}

@@ -1,0 +1,80 @@
+1a
+13: 0000 1101
+-4: 4->invert bits->add 1: 0000 0100->1111 1011->1111 1100
+ 0000 1101
+ 1111 1100
+10000 1001
+
+b
+i) In word-addressing, memory is managed per row. In our case, each row is 16bits.
+2^30(G)*2^3(8)=2^33 bits
+ii) In byte-addressing, assuming 1 byte = 8 bits, we have split our "row" into two, therefore twice as many addresses to manage.
+2^33*2=2^34
+
+c
+(A+A')*(A+B)+(A+B)' Distributive
+(A+B)+(A+B)' Negation
+1 Negation
+
+d
+C304 F000
+1100 0011 0000 0100 1111 0000 0000 0000
+Sign: 1 (Negative)
+Exponent: 1000 0110->134->134-127=7
+Significand+Hidden: 1.0000 1001 1110 0000 0000 000
+Binary: 1.0000 1001 1110 0000 0000 000 * 2^7 = 1000 0100.1111
+Negative Decimal: 2^7+2^2+2^-1+2^-2+2^-3+2^-4 = -132.9375
+
+2a
+i) Operation Code or Address (Register can be replaced by Address)
+ii) Operands are stored in a register or memory address. Registers provides faster execution because they reside in CPU cache which is often
+faster than main memory.
+iii) 2 bits to the left -> Operand*4. The most significant bit stores the sign. Since multiplication does not change signs, the expected
+result should not change the most significant bit. A change denotes that an unexpected overflow has occured.
+iv) An interrupting device will send the CPU an "Interrupt Signal" along with an "Interrupt Vector Number," an unsigned byte (0-255) on
+Pentium. The number is used to index an "Interrupt Descriptor Table" (IDT) with 256 entries. Each entry is a 64-bit "descriptor" which
+includes the Interrupt Handler's 32-bit start address (48-bits total with the other 16 used to defining the memory segment of the interrupt
+handler). IO Interrupts go through 32-255 (reserved for External Interrupts). CPU Exceptions (divide-by-zero illegal operation) go through
+0-18. Software interrupts using System Calls.
+The start address of IDT is held in a special IDT Base Register (IDTR).
+1) Complete the current executing instruction
+2) Push the EFLAGS Register onto the stack
+3) Clear the Interrupt Flag bit in EFLAGS register (disables further interrupts)
+4) Push the Return Address (contents of the EIP register) onto the Stack
+5) Call the Interrupt Handler using the entry in the IDT
+
+b
+500H            Start of program memory allocation
+800H LOAD[905H] Load first line of code
+801H PUSH[902H] Push X
+802H PUSH[903H] Push Y
+803H SUB        X-Y
+804H PUSH[902H] Push X
+805H PUSH[903H] Push Y
+806H MULT       X*Y
+807H PUSH[900H] Push 5
+808H PUSH[904H] Push Z
+809H MULT       5*Z
+80AH ADD        X*Y+5*Z
+80BH MULT       (X*Y+5*Z)*(X-Y)
+80CH POP[901H]  Returns solution
+80DH STORE      Stores the solution somewhere
+900H 5
+901H A
+902H X
+903H Y
+904H Z
+905H 501H       Memory location for first line of code
+
+4a
+Direct Memory Access (DMA) is a technique to relieve the CPU from the task of handling low-level device I/O. A special hardware device
+called a DMA controller takes over the responsibility of handling I/O. Simple DMA controllers can only handle a single read at a time, whereas
+more sophisticated ones support multiple reads and putting the results at different memory locations (scattergather DMA).
+Interrupts are needed to return control of the Memory Bus to the CPU.
+
+b
+Block Chaining, Block Allocation Table (FAT), Index Blocks (Inodes)
+
+c
+When an open file is active in the memory (using Inodes for example), the location of the original i-node, disk device number, and major/minor
+device numbers are needed to write the Inode back to disk if it had been modified. Also contains number of processes with opened file.

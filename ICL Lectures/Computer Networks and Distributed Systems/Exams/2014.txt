@@ -1,0 +1,156 @@
+1a
+i) ICMP is a network layer protocol that allows routers to send control/error messages to other router/hosts to provide feedback about
+communication problems since IP datagrams are unreliable and does not guarantee delivery. Ping verifies connection (If not timed out/host
+blocking ping requests), quality of connection (round trip time, dropped packages), and sending/receiving echo replies. Can also Ping using
+domain names. If successful, DHCP name resolution is also successful (if failed, but IP connection succeeds, then DHCP failed). Traceroute
+finds intermediate hosts (hops) and send ICMP error messages back for every received packet from those hosts with TTL=0. Send packets with
+increasing TTL for each subsequent packet. If timed out during 8th and 9th address, then there's a problem between those routers.
+
+ii) Frame delimiter is a data link layer ethernet framing method to indicate start/end of frame. 10101011 indicates start of frame which
+allows receiver to miss part of preamble (establishes synchronization) without missing the start of the next field
+
+iii) SMTP is an application layer protocol that establishes a TCP connection on port 25 between MTA and MUA to deliver mail, in contrast to
+IMAP/POP which receives them. Message Transfer Agents are mail servers that handle message transfers and holds mail if destination is
+unreachable. Mail User Agents are clients for email composition, display (Outlook). 
+
+iv) Routing Tables, which operates on the network layer, aims to achieve efficient routing in terms of Available Bandwidth, Delay, Hop Count
+Price, Traffic Type Priority. Static routing compute routes once and load into router. Dynamic (adaptive) routing change routes to reflect
+changes in topology and load (as seen through congestion), using Distance Vector Routing and Link State Routing on packet-switched networks.
+Router forwards packets based on destination networks by looking at the table, unlike bridges, which use hosts. Routers verifies/modifies
+packets, updates fields affected by routing, checks/recalculats checksum, adding transmission, processing delays, and potentially queuing. 
+Routing Objectives:
+Correctness: Find a route (if it exists)
+Efficiency: Routes should provide good performance (should use minimal resources)
+Robustness: Route even when links/nodes fail
+Adaptability: Routes should reflect network conditions without overreacting
+Fairness: Hosts should have equal access to network but Quality of Service (QoS) should be respected
+Simplicity: Cheap, predictable and verifiable
+
+b
+i) Networks need to choose when and how much resources to give mediums based on contention, fairness access latency. They can be allocated
+statically with bounded latency to transmit like TDM, FDM and CDMA, but that leads to wasted bandwidth. Dynamically allocating resources
+on demand leads to collision and contention using CSMA or lower performance using Token Passing.
+
+ii) 2015:2b
+
+iii)
+End-to-end propagation time = length / transmission speed
+Time to transmit frame = frame size / link data rate
+Collision detection requires that time to transmit be at least twice end-to-end propagation time, so
+2 * length / transmission speed <= frame size / link data rate
+2 * 10km / 200,000km/s <= frame size / 10^11b/s
+10^7 bits <= Frame Size
+Frame size requirement is too high leading to a lot of wasted data. If frame size is smaller, detection cannot be detected.
+*10^7 / 10^11 = 0.0001 Seconds or 100ms. At n th retry, wait between 0 and 2^n-1 slot times (100ms). Do this up to a maximum of 1023 slot
+times. Give up on 16th collision. 9.6ms interval between successive frames of the same host. Allows other hosts to use medium. Initial frame
+can be transmitted immediately. CD would be effective in this case, given the relatively low delay times.
+
+iv)
+Switches and Bridges operate on Data Link Layer. It listens to traffic and builds address/port table mappings based on source and
+destination MAC addresses in the header using loop-free spanning tree. It purges entries that have their TTL expired. If source port, don't
+forward. If port for destination MAC known, forward only to that port, else flood all but source port to find destination.
+They used to join LANs together, thus forming the ends of collision domains and administration. When speeds between different networks
+differ, it can store and forward (check CRC) or Cut-through (No Check). All this adds transmission and processing delays.
+
+2a
+i)
+Feature      | Circuit                   | Packet                          | Winner
+Delivery     | In order                  | Out-of-order                    | Circuit
+Bandwidth    | Guarenteed                | Variable                        | Circuit
+Bandwidth    | Unused Bandwidth Wasted   | Uses what's required            | Packet
+Node Failure | Connection Breaks         | Reroutes                        | Packet
+Congestion   | Slow Connection           | Packets delayed, out-of-order   | Depends
+Charge       | Time                      | Packet                          | Depends
+Overhead     | Initial Connection Set-up | Every Packet Addressing/Control | Depend on Transfer Size
+
+ii) *Packet Switched networks with IP multicast using UDP datagrams is most suitable. It is difficult for a server to establish guarenteed
+channels with many streaming audiences.
+
+iii) Connectionless services use datagram (packet) and does not guarantee order. Packet switched networks provide pure CL service. Packets
+addressed by destination and routed accordingly. Each packet handled separately. No set-up/tear-down calls. Connection-oriented services use
+circuits where order is preserved. Circuit switched networks provide pure CO service (circuit defines destination and route).
+
+iv) Circuit switched networks can create virtual circuits by routing packets using circuit identifier. Each packet includes circuit identifier
+in the header. Set-up/tear-down overhead. Switches/Routers need to maintain circuit information (tables). Less routing overhead compared to PS
+
+2b
+i) \2 Physical Layer:12-13
+
+ii) Sending 0001100 could be heard as 001100 if timing is wrong. Need synchronisation between sender/receiver, for high speed transmissions.
+1) Accurate clocks, which are expensive 
+2) Separate signal with clock in it
+3) Modify signal so that clock is built in
+
+iii) Manchester Encoding is suitable because it has built in clock. It requires more bandwidth, but is acceptable in 100Gbps networks.
+
+3b
+import java.rmi.*;
+import iKeyboard;
+import iDisplay;
+import iStockbroker;
+import iQuoteserver;
+public class SMA {
+  public static void main(String[] args) {
+  Registry r = LocateRegistry.getRegistry(“remotehost”);
+  if(System.getSecurityManager()) == null) System.setSecurityManager(new RMIsecurityManager());
+    try {    
+      iKeyboard KB = (iKeyboard) r.lookup("rmi://remotehost/KBService");
+      iDisplay DP = (iDisplay) r.lookup("rmi://remotehost/DPService");
+      iStockbroker SB = (iStockbroker) r.lookup("rmi://remotehost/SBService");
+      iQuoteserver QS = (iQuoteserver) r.lookup("rmi://remotehost/QSService");
+    } catch (RemoteException e) { System.out.println(“Exception: “ + e); }
+    
+    string shareName = args[1];
+    float quantity = args[2];
+    float stoploss = args[3];
+
+    While(true){
+      iQuoteserver Q = QS.getQuote(name);
+      if(Q.current<stoploss) {
+        DP.display(Q.shareName, Q.current, Q.open, Q.change);
+        DP.alarm(name);
+        if(KB.confirmSale(shareName, quantity) SB.sell(shareName, value);
+      }
+      Thread.sleep(5000)
+    }
+}
+
+c
+import.java.rmi*;
+public class Keyboard extends UnicastRemoteObject implements iKeyboard {
+  public Display() throws RemoteException { super(); }
+  public boolean confirmSale(string name, long quantity) throws remoteException; {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Confirm Name");
+    String name = sc.nextLine();
+    if(sc.nextline()!=name) return false;
+    System.out.println("Confirm Quantity");
+    String quantity = sc.nextLine();
+    if(sc.nextline()!=quantity) return false;
+    return true;
+  }
+}
+public class Display extends UnicastRemoteObject implements iDisplay {
+  public Display() throws RemoteException { super(); }
+  public void display(string shareName, float current, float open, float change) throws RemoteException; {
+    System.out.print("Share Name: "+shareName+" Current Price "+current+" Open "+open+" Change "+change)
+  }
+  public void alarm(string shareName) throws RemoteException; {
+    System.out.print("Stock dropping below stoploss: "+shareName);
+  }
+  public void sold(String shareName, float value) throws RemoteException;{
+    System.out.print("Sold "+shareName+" At "+value);
+  }
+}
+public class TerminalServer {
+  public static void main(String args[]) {
+    Registry r = Locateregistry.getRegistry();
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    try{
+        iKeyboard KB = new Keyboard();
+        r.rebind("rmi://localhost/KBService",KB);
+        iDisplay DP = new Display();
+        r.rebind("rmi://localhost/DPService",DP);
+    } catch (Exception e){ System.out.println("Exception: "+e); }
+  }
+}

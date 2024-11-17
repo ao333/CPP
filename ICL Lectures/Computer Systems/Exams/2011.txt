@@ -1,0 +1,81 @@
+1a
+i)
+A B AvB
+0 0 0
+0 1 1
+1 0 1
+1 1 1
+
+A B ~(A^B)
+0 0 1
+0 1 1
+1 0 1
+1 1 0
+
+ii)
+~(AvB)=~A^~B
+~(A^B)=~Av~B
+
+iii)
+A NAND A: ~(A^A)
+B NAND B: ~(B^B)
+A NAND B: ~(~(A^A)^~(B^B)) 
+Indempotent: ~(~A^~B)
+Demogran: ~~Av~~B
+Negation: AvB
+
+b
+i) 4 chips per module -> 64 chips
+
+ii) 2^4*2^20*2^3 / 2^8*2^10*2^5 = 2^4 = 16 modules
+
+iii) 16 modules -> Need 4 bits to address memory -> Low-Order Interleaving uses last 4 bits -> 0110 -> Module 4
+
+c
+i) 1 bit Sign, 8 bits Exponent (Stored in Excess-127) , 23 bits Significand (Normalized)
+
+ii)
+Binary: 1100 0100 1001 1010 0101 0000 0000 0000
+IEEE: 1 1000 1001 0011 0100 1010 0000 0000 000
+Sign: 1 (Negative)
+Exponent: 137-127 -> 2^10
+Significand+Hidden Bit: 1.0011 0100 1010 0000 0000 000
+Unormalize: 100 1101 0010.1...
+Decimal: 2^10+2^7+2^6+2^4+2^1+2^-1 = 1234.5
+
+2a
+i) Operands: Register, Memory, Constants
+
+ii) 2016:2aiii
+
+iii) EBP and EIP will be saved. EBP set up the stack pointer to where it was before the interrupt, thus are required to deallocate memory.
+EIP is saved onto the stack so it can be popped back into EIP to resume original instruction.
+
+b
+Sort(A,N):
+for (i=0; i<N; i++)
+  for (j=0; j<N; j++)
+    if(A[i]>A[j]){
+      T=A[i]
+      A[i]=A[j]
+      X[j]=T;
+    }
+
+100H N
+101H 0
+102H 1
+103H 300H
+
+080H LOAD R0,[101H] R0=i=0
+081H LOAD R1,[100H] R1=N
+082H LOAD R2,[101H] R2=j=0
+083H SUB R1,R0      N-i
+084H IFZER R1       i>N
+085H IFNEG R1       i=N
+086H GOTO
+087H ADD R0,[102H]  i++
+088H SUB R2,R0      N-j
+089H IFZER R2       j>N
+08AH IFNEG R2       j=N
+08BH GOTO
+...

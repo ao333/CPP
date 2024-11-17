@@ -1,0 +1,29 @@
+ a1 is A( i: 3 ); a2 is A( i: 5 )
+after a1 = a2:
+ a1 is A( i: 5 )
+ a1.f() == 10
+ a1.g() == 15
+ a1.h() == 20
+ b is B( i: 7, j: 2 )
+ b.f() == 14
+ b.g() == 9
+ b.h() == 280
+after a1 = b:
+ a1 is A( i: 7 )
+ a1.f() == 14
+ a1.g() == 21
+ a1.h() == 28
+ *pa is A( i: 5 )
+ pa->f() == 10
+ pa->g() == 15
+ pa->h() == 20
+ *pb is B( i: 7, j: 2 )
+ pb->f() == 14
+ pb->g() == 9
+ pb->h() == 280
+after pa = pb:
+ *pa is A( i: 7 )
+ *pb is B( i: 7, j: 2 )
+ pa->f() == 14
+ pa->g() == 21
+ pa->h() == 280

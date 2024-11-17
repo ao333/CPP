@@ -1,0 +1,5 @@
+AX(cautious(X) v normal(X) -> EY shelter(Y,X))
+~EX~(cautious(X) v normal(X) -> EY shelter(Y,X))   AX P(X)=~EX ~P(X)
+~EX~(~(cautious(X) v normal(X)) v EY shelter(Y,X)) P->Q=~PvQ
+~EX~~(cautious(X) v normal(X)) ^ ~EY shelter(Y,X)) De Morgan
+~EX(cautious(X) v normal(X)) ^ ~EY shelter(Y,X))   Double Negation

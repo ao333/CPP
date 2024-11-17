@@ -1,0 +1,92 @@
+1a
+A*B(1+C+CD+CDF) Distributive
+A*B(1)          Simplification
+A*B             Simplification
+
+b
+Multimuxers controls which inputs are fed to the output. A multiplexer has 2^n inputs, n control lines and 1 output
+
+c *Each hex is 4 bits, 2 hex fit in 1 byte, 4 bytes required for 32bit address.
+Bin: 10001110 10011101 00000000 00000000
+Big: 10001110 10011101 00000000 00000000
+Lil: 00000000 00000000 10011101 10001110
+
+d
+i) 2^2*2^30^2*2^5 = 2^37bits
+
+ii) 2^2*2^30 / 2^9*2^20 = 2^3 = 8 modules
+
+iii) 8*(32/4) = 64 chips
+
+iv) 512M*8= 4096 byte addresses per module. Thus 23rd byte is in module 0.
+
+v) 23 mod 8 = module 7
+
+e
+0 1111 1111 0100 1001 0000 0000 0000 000
+Exponent: 255
+Significand: Non-zero bit pattern
+NaN (Not-a-Number)
+
+2a
+i) Registers, ALU, Control Unit
+
+ii) Register-to-Register is faster because only the Internal Bus is needed, while Registry-to-Memory reqires the Address Bus also.
+
+iii)
+Programmed I/O: Continually “poll” a device’s control port until the device is ready, then initiate transfer.
+  Simple to Program
+  Can guarantee Response times
+  Poor CPU utilisation (CPU Busy Waiting)
+  Multiple Devices are awkward to handle
+Interrupt-Driven I/O: Initiate transfer and then do something else. Device will “interrupt” CPU when transfer is complete. On detecting an
+interrupt, CPU transfers control to device’s interrupt handling procedure (interrupt handler).
+  Interrupt-Processing Time is relatively Expensive
+  Bad for high-speed, high-data volume devices that might lose data if they are not serviced quickly-enough.
+  Bad if many Devices continually require attention.
+DMA I/O: CPU writes start address of block, number of bytes of block and direction of transfer to DMA’s I/O ports and issues Start Command.
+DMA controller transfers block of data between the Device and Main Memory without the direct intervention of the CPU.
+  On completion the DMA Controller interrupts CPU.
+IO Processors: Sometimes even DMA I/O is in-adequate. A more powerful approach is to use one or more dedicated I/O processors to relieve the
+CPU of I/O related tasks. I/O processors are more capable than DMA controllers and are often full-featured CPU’s with their own local memory
+for buffering data and executing I/O related tasks.
+
+b
+i) Push, Pop
+
+ii) Program Counter
+
+iii) Jump
+
+iv) When a function calls, it first pushes the value of the Program Counter into the stack (increment PC), then grows down the stack (guided
+by ESP). When the function call completes, the EBP is pushed into ESP, thus deallocating the current frame. The return address is then pushed
+into the EIP, causing a Jump or Return to the original calling stack.
+
+v) 13 Pentium 3 (Slides 16-17)
+
+4a
+Hierarchical: Entries of outer layer tables point to inner layers, creating several levels (2/3/...)
+Hashed: Hash virtual page number into page table. Page table contains chain of elements hashing to same location. Search for match of virtual
+page number in chain. Extract corresponding physical frame if match found.
+Hashed Page Table: Hash virtual page number into page table. Page table contains chain of elements hashing to same location. Search for match
+of virtual page number in chain. Extract corresponding physical frame if match found. If not, follow chain pointer.
+
+b
+Triply > Doubly > Singly > Direct = 4
+
+c
+DMA I/O: CPU writes start address of block, number of bytes of block and direction of transfer to DMA’s I/O ports and issues Start Command.
+DMA controller transfers block of data between the Device and Main Memory without the direct intervention of the CPU.
+Speed of DMA Controller, memory and disk
+
+d 4.2S Memory Management (Q5)
+
+e
+i) 20>10>22>20>2>40>6>38
+5*(10+12+2+18+38+34+32)=730ms
+
+ii) 20>20>22>10>6>2>38>40
+5*(0+2+12+4+4+36+2)=300ms
+
+iii) 20>20>22>38>40>10>6>2
+5*(0+2+16+2+30+4+4)=290

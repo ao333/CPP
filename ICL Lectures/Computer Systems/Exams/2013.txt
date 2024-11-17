@@ -1,0 +1,103 @@
+1a
+0123456
+TESTING Big Endian: Most significant bit first
+GNITSET Little Endian: Least significant bit first
+
+b
+-5: 5=0101->Flip=1010->+1=1011
+
+c
+Binary: 139.325=1000 1011.0101 0011... (1.3/2^2+1.2/2^4+1.6/2^7+1.2/2^8)
+Normalise: 1.0001 0110 1010 0110 0110 011*2^7
+Negative Sign: 1
+Exponent: 7+127=134->1000 0110
+Significand: 0001 0110 1010 0110 0110 011
+IEEE Binary: 1100 0011 0000 1011 0101 0011 0011 0011
+IEEE Hex: C30B5333
+
+d
+A'(A+B)+(B+A)(A+B') Idempotent
+(A+B)[A'+(A+B') Distributive
+(A+B)[(A'+A)+B'] Cummulative
+(A+B)(1+B') Negation
+(A+B)1 Simplification
+A+B
+
+2a
+i) The Instruction Pointer Register holds the address of the next instruction to be executed. The EIP corresponds to the Program Counter
+Register in other architectures. EIP is not normally manipulated explicitly by programs. It is updated by special control-flow CPU
+instructions (e.g. call, jmp, ret) that are used to implement if's, while's, method calls etc.
+ii)
+Call method: push eip;   push return address
+             jmp method; jump to start of method
+Ret method:  pop eip;    pop return address into eip
+
+push wordop: esp = esp - 2
+             memory[esp] = wordopr
+pop wordop:  wordop = memory[esp]
+             esp = esp + 2
+iii)
+To return, the Interrupt Handler executes iret instruction which restores the state (EFLAGS/EIP) and jumps to the return address on the
+Stack). Restoring other registers will be the programmer's responsibility.
+*The Eflags register holds information about the current state of the CPU. Its 32 bits are set/cleared after arithmetic instructions are
+executed, and these bits are used by conditional branch instructions:
+Zero Flag (Bit 6) Set (=1) if the result is zero, cleared (=0) otherwise.
+Sign Flag (Bit 7) Set to MS-bit of result, which is the sign bit of a signed integer.
+Overflow Flag (Bit 11) Set if result is too large a positive number or too small a negative number, cleared otherwise.
+Carry Flag (Bit 0) Set if carry or borrow out of MS-bit, cleared otherwise. Used in multi-precision arithmetic
+Parity Flag (Bit 2) Set if LS-byte of result contains an even number of 1 bits, cleared otherwise.
+iv) Hardware interrupt is an external triggering event, while procedure call occurs as part of the program execution. Hardware interrupt comes
+with a specific signal or code that enables the CPU to initiate and execute an appropriate interrupt handling routine (procedure). On the
+other hand, the specific called procedure is included in the program. A function call is synchronus while a hardware interrupt can be
+asynchronus. Also, before calling the interrupt handler, a pentium CPU pushes the EFLAGS register and disable further interrupts. A function
+(ie system) call pushes EIP and causes the privilege level to be switched to kernel-mode from user-mode.
+
+2b
+001H A[0]            Array value at index 0
+002H A[1]            Array value at index 1
+....                 Until A[n-1]
+100H B               Output
+101H n               User input for last index (loop counter)
+....
+200H 1               Constant for incrementing 1
+201H 2               Constant for decrementing 2
+202H 001H            Pointer to beginning of Array
+....
+400H LOAD R0,[100H]  R0=0 (Temporary address of B before storing it later) 
+401H LOAD R1,[101H]  R1=n (loop counter)
+402H LOAD R2,[202H]  R2=Mem Addr of 202H (pointer to A[0]/start of array)
+403H IFZER R1,40BH   If n=0, store value and then exit program
+404H IFNEG R1,40BH   If n<0, store value and then exit program
+405H ADD R0,[R2]     B=B+Array value pointed to by R2
+406H ADD R2,[200H]   Increment R2 by 1
+407H SUB R0,[R2]     B=B-Array value pointed to by incremented R2
+408H ADD R2,[200H]   Increment R2 by 1 again
+409H SUB R1,[201H]   n=n-2 Decrement R1 (loop counter) by 2
+40AH GOTO 403H       Jump back to beginning of the lOOP
+40BH STORE R0,[100H] Store temp R0 into B
+40CH STOP            Exit Programs
+
+3a
+IO is much slower than CPUs. This problem is multiplied in multi-user systems. Thus interrupts are necessary to allow the CPU to schedule
+other user processes to ensure responsiveness and fairness.
+
+b
+1) Fetch the instruction: The next instruction is fetched from the memory address that is currently stored in the program counter and stored
+into the instruction register. At the end of the fetch operation, the PC points to the next instruction that will be read at the next cycle.
+2) Decode the instruction: During this cycle the encoded instruction present in the IR is interpreted by the decoder.
+3) Read the effective address: In the case of a memory instruction (direct or indirect) the execution phase will be during the next clock
+pulse. If the instruction has an indirect address, the effective address is read from main memory, and any required data is fetched from main
+memory to be processed and then placed into registers. If the instruction is direct, nothing is done during this clock pulse. If this is an
+I/O instruction or a register instruction, the operation is performed during the clock pulse.
+4) Execute the instruction: The control unit of the CPU passes the decoded information as a sequence of control signals to the relevant
+function units of the CPU to perform the actions required by the instruction such as reading values from registers, passing them to the ALU to
+perform mathematical or logic functions on them, and writing the result back to a register. If the ALU is involved, it sends a condition
+signal back to the CU. The result generated by the operation is stored in the main memory or sent to an output device. Based on the feedback
+from the ALU, the PC may be updated to a different address from which the next instruction will be fetched.
+5) When an interrupt occurs, the CPU will complete the current instruction, push all data related to the current process then call the
+interrupt handler which will point to the address of the relevant Interrupt Descriptor Table number.
+
+c *2014:2aiv
+A vectored interrupt allows the interrupting device direct the processor to the appropriate interrupt service routine. This is in contrast to
+a polled interrupt system, in which a single interrupt service routine must determine the source of the interrupt by checking all potential
+interrupt sources, a slow and relatively laborious process.

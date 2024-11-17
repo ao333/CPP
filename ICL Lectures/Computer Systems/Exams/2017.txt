@@ -1,0 +1,153 @@
+1a
+A+((A'+B'')C) Demorgan
+A+((A'+B)C)   Negation
+A+(A'+B)*AC   Distributive
+(1+B)AC       Negation
+1AC           Simplification
+AC
+
+b Encoders are used to reduce the number of data lines during transfer. Decoders expands the data transfered according to a pre-agreed
+algorithm to retrieve the original data prior to encoding. This saves bandwidth.
+4-2 decoder where the Output = A*B
+A B O
+0 0 0
+0 1 0
+1 0 0
+1 1 1 <- Bit we want
+
+c *Each hex is 4 bits, 2 hex fit in 1 byte, 4 bytes required for 32bit address.
+Bin: 10100100 00010001 00000000 00000000
+Big: 10100100 00010001 00000000 00000000
+Lil: 00000000 00000000 00010001 10100100
+
+d
+i) 4G*4bytes = 16GB
+
+ii) 2^2*2^30 / 2^10*2^20 = 2^2 or 4 modules
+
+iii) 4 module * 4 chips each module = 16 chips
+
+iv) Assuming 8 bits in a byte, each module holds 16GB/4 = 4GB, byte 31 is in module 0.
+
+v) 31 mod 4 = module 3
+
+e
+1111 1111 1010 1011 1100 1101 1110 1111
+1 1111 1111 0101 0111 1001 1011 1101 111
+Sign: 1, Exponent: 255, Significand: Non-0 -> NaN
+
+2a
+i) Program Counter/EIP
+
+ii) Instruction Execution Cycle
+Fetch the instruction pointed to by the PC from memory
+Increment PC to point to next instruction
+Transfer instruction to decoder and decode it
+Fetch the Operands from Register or Memory
+Perform the Operation in ALU
+Store the compututed results in Register or memory
+
+iii) Jump, Call, and Ret: Net effect is to change the content of PC so it points to the instruction we want to execute.
+
+iv) 4+2+10= 16 bits total
+8 different operations = 3 bits. However we need 1 more bit to address 2 schemes (Operand/Operand & Operand/Memory) thus 3+1 = 4 bits OPCODE
+4 registers = 2 bits Register Index
+1K memory addresses = 2^10 = 10 bits (first 2 bits can be interpreted as Register Index, in case second part is not used)
+
+iv) *Official Grading Rubric
+int sum=0, big, n;
+if(B<=C)
+  big=C;
+  n=B;
+else(C<B)
+  big=B;
+  n=C;
+While(n<=0)
+  sum+=big;
+  n--;
+A=sum;
+
+100H A
+101H B
+102H C
+
+200H 0   Set initial sum to 0
+201H 1   Decrement value
+202H big Temporary value allowing for fewest additions possible (efficient)
+
+080H LOAD R0,[200H]  sum=0
+081H LOAD R1,[102H]  R1=C
+082H SUB R1,[101H]   C-B
+083H IFNEG R1,088H   If C<B, Start from 088H
+084H LOAD R1,[102H]  If not, then C>B, R1=C
+085H STORE R1,[202H] big=C
+086H LOAD R2,[101H]  n=B
+087H GOTO 8BH
+088H LOAD R1,[101H]  If C<B, R1=B
+089H STORE R1,[202H] big=B
+08AH LOAD R2,[102H]  n=C
+08BH IFZER R2,90H    If n=0, end loop
+08CH IFNEG R2,90H    If n<0, end loop
+08DH ADD R0,[202H]   sum+=big
+08EH SUB R2,[201H]   n--
+08FH GOTO 8BH        Loop if n>0
+090H STORE R0,[100H] A=sum
+091H STOP
+
+4a
+Paging
+  Physical address space of process can be noncontiguous
+  Process allocated physical memory when available
+  Avoid external fragmentation
+  Avoid problems of variable sized memory chunks
+Frames
+  Fixed-sized blocks of physical memory
+  Keep track of all free frames
+Pages
+  Block of same size (as frame) of logical memory
+  To run program of size n pages
+  Find n free frames and load program
+  Set up page table to translate logical into physical addresses
+
+Segment
+  Independent address space from 0 to some maximum
+  Can grow/shrink independently
+  Support different kinds of protection (read/write/execute)
+  Unlike pages, programmers are aware of segments
+  Segment corresponds to program, procedure, stack, object, array, etc.
+Memory allocation harder due to variable size
+  May need to move segment which grows
+  May suffer from external fragmentation
+  But good for shared libraries
+
+b
+i) Low-level Format: Disk sector layout, Cylinder skew, Interleaving are all restored to a standard
+*High-level format: Boot block, Free block list, Root directory, Empty file system
+
+ii) Seek time: time required to search for adjacent cylinder
+
+iii) Scan: Choose requests which result in shortest seek time in preferred direction
+Only change direction when reaching outermost/innermost cylinder (or no further requests in preferred direction)
+Most common scheduling algorithm (also called elevator scheduling)
+Long delays for requests at extreme locations
+
+iv) C-Scan: Services requests in one direction only
+When head reaches innermost request, jump to outermost request
+Lower variance of requests on extreme tracks
+May delay requests indefinitely (though less likely)
+
+c \Imperial-Solutions\3 Computer Systems\2 Operating Systems\5.1S File Systems:4
+
+d
+1) InterruptEnabled is not set to False?
+2) Index of 0 is constant, may require a variable or, endless loop
+
+e
+LRU: 13 Faults
+1 4 5 3
+2 6 1 6 5
+3 2 4 1
+Clock Page Replacement: 13 Faults
+1 4 5 3
+2 6 1 6 5
+3 2 4 1

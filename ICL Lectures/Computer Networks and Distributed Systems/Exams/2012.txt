@@ -1,0 +1,100 @@
+1a
+i) SYN (Transport Layer): Control bit containing synchronise sequence numbers 
+Indicates position in byte stream
+Controls packet order, detects loss, and duplicates
+
+ii) Signal Attentuation (Physical Layer): Signal strength decreases over distance. Requires Repeaters to boost it over long distances.
+
+iii) Differential Manchester Encoding (Physical Layer): Binary value represented by presence/absence of transitions
+(0: preceding transition; 1: no precedingtransition) Every bit has at least one transition
+Polarity does not matter but requires more complex equipment
+
+iv) 2016:2ai
+
+v) IEEE 802.3 Frame Format (Data Link Layer)
+Preamble (7 bytes): alternating 0s and 1s to establish synchronisation
+  Framing then by timing, spaces between frames plus counting from length field
+SFD (Start of frame delimiter, 1 byte): 10101011 indicates start of frame
+  Allows receiver to miss part of preamble without missing the start of the next field
+Destination address (16 or 48 bits depending on implementation)
+  Host(s) intended to receive
+    Single host (unicast)
+    Group address (multicast)
+    Global address (broadcast)
+Source address (16 or 48 bit address of sender)
+Length (2 bytes, IEEE 802.3 only): Bytes in this frame (optional)
+Data (0-1500 bytes): Includes higher layer headers
+Pad (0-46 bytes): Ensure frame is long enough to enable collision detection
+FCS (4 bytes, Frame Check Sequence): Enables error detection CRC, based on all fields except preamble, SFD and FCS
+
+vi) ICMP (Network Layer)
+Ping
+  Verify connection to hosts
+  Quality of connection (round trip time, dropped packages)
+  Sends echos and receives echo replies
+Traceroute
+  Find out about intermediate hosts (hops)
+  Routers send ICMP error messages back for every received packet with TTL=0 (type 11)
+  Send packets with increasing TTL for each subsequent packet
+
+b
+i) Flow control
+Manages data buffers and coordinates traffic (between sender and receiver) to prevent overflows
+Fast senders have to pause for slow receivers
+
+ii)
+Window size used for flow control: Sender should not send more than window size, 0 means ”no more data now
+
+iii)
+A                     B
+  SEQ=0/512Kbytes>
+  <ACK512K/WIN1536K
+  SEQ=512K/512Kbytes>
+  <ACK1024K/WIN1024K
+  SEQ=1024K/512Kbytes>
+  <ACK1536K/WIN512K
+  SEQ=1536K/512Kbytes>
+  <ACK=2048K/WIN0K
+
+  <ACK=2048K/WIN128K
+  SEQ=2048K/128Kbytes>
+
+iv) TCP sender maintains 2 windows: Receiver Window (flow control) and congestion window
+Uses whichever currently smaller
+Congestion window based on network conditions
+Windows grows and shrinks based on packet loss
+Different algorithms for finding optimal size, e.g. additive, increase, multiplicative decrease (AIMD)
+Requires efficient timeouts to detect loss
+TCP measures RTT and adjusts timeouts (drop/block packet)
+
+2a
+i) Multiplexing: Sharing channels, Signal occupies bandwidth in channel but it need not occupy whole channel
+
+ii) 2017:4b
+
+iii) https://www.geeksforgeeks.org/computer-network-multiplexing-demultiplexing-transport-layer/
+UDP and TCP perform the demultiplexing and multiplexing jobs by including two special fields in the segment headers: the source port number
+field and the destination port number field.
+  Multiplexing – Gathering data from multiple application processes of sender ,enveloping that data with header and sending them as a whole to
+the intended receiver is called as multiplexing.
+  Demultiplexing – Delivering received segments at receiver side to the correct app layer processes is called as demultiplexing.
+
+b
+i)
+IP address identifies network and host on that network Device on n networks has n IP addresses - one for each
+MAC Address operates on the Data Link Layer between physical devices, cannot understand IP, needs translation
+
+ii)
+IP
+Class B: 140.247 form Network Address is within 128-191 (10)
+60.123 form Host Address
+Network is 16-2=14 bits
+
+iii) ARP 2017:4c
+
+iv)
+Netmask: 253 -> 255 (should be consecutive 1s)
+Default Router: 225 -> 247 (to conform with Address 1)
+DNS Server 1: 192 is a private address, should not be made public for DNS
+
+3 8.1S Message Passing:2

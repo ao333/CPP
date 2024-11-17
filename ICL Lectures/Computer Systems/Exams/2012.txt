@@ -1,0 +1,95 @@
+1a
+i) 16/4 = 4 chips per module, 2M/256K = 8 modules
+
+ii) Byte: 2*2^20*2 = 2^22, Word: 2*2^20=2^21
+
+iii)
+Address: 100H       101H       101H       101H
+Binary:  0000 0011  1111 0111  1000 0000  0000 0001
+Decimal: 2^0+2^1+2^2+2^4+2^5+2^6+2^7+2^8+2^9 = 1015, 2^0=1 -> first bit 1 -> -1
+Sum: 0000 0011  1111 0111
+     1000 0000  0000 0001
+     1000 0011  1111 1000
+
+b i)
+Binary: 0100 0001 1000 0000
+Sign: 0
+Exponent: 1000001=65 (2^6-1=Excess 63) 65-63=2.
+Significand+Hidden Bit = 1.1*2^2 = 110 = 6
+
+ii)
+Sign: 1
+Binary Decimal: 17.5 = 10001.1
+Normalize: 1.00011*2^4
+Exponent: 4+63=67= 1000011
+Binary: 1100 0011 0001 1000
+HeX:    C    3    1    8
+
+iii)
+Addition: Align Exponents
+ 1.00011*2^4 (ii)
+-0.011  *2^4 (i)
+=0.10111*2^4
+Decimal: 1011.1 -> Negative Sign -> -11.5
+Normalize: 1.0111*2^3
+Exponent: 3+Excess63=66 -> 100 0010
+Sign: 1
+Binary 1100 0010 0111 0000
+Hex:   C    2    7    0
+
+Multiplication
+ 1.00011*2^4
+*    1.1*2^2
+=1.00011
++0.100011
+=1.101001*2^(4+2)
+Decimal: 110 1001 = 105, Negative Sign -> -105
+Exponent: 6+Excess63=69 -> 1000 101
+Binary: 1 100 0101 1010 0100
+Hex:    C     5    A    4
+
+2a
+i) OPCODE (eg. JMP) and ADDRESS of the instruction to jump to. When CPU executes the jump, it sets the PC/EIP to the ADDRESS, increment the
+PC, then transfers the instructions in that ADDRESS into Instruction Decoder through the Bus, then decode/execute. If jump is conditional
+(eg. JG), then the condition is first checked in the ALU. If true, then amend EIP to ADDRESS from the jump instruction and then fetch-execute.
+
+ii)
+1) Constant Operands are the fastest since the second operand is encoded into the instruction, so there is one fewer fetch Register fetch.
+2) Register Operands are the second fastest as both values are stored in the CPU Register Cache.
+3) Memory operands are the slowest as the CPU needs to fetch them from slow memory through internal bus.
+Registry operands allows maximum representation and quick access time because both operands can be registers (instead of 1 constant), and are
+stored in cache (instead of slow memory).
+
+iii)
+Stack memory is a LIFO queue. Once a value is pushed, it will be the first one to be popped. When a funtion call occurs, parameters are
+passed. The frame pointer (EBP) and the return address (address of the instruction after the function call) pushed onto the stack. Local
+variables are then allocated as ESP moves downwards. When the function returns, the results are copied into EAX (or any other multi-purpose
+register), the return address is popped into EIP. ESP is then reset from initial EBP (deallocation).
+
+b *This is simplified, refer to official rubric 2017:2a:iv
+int A = 0;
+for(int i = 0; i > C; i--)
+  A=A+B;
+
+100H A
+101H B
+102H C
+
+200H 0
+201H 1
+
+080H LOAD R0,[200H]  Instantiate R0 with 0, the initial Sum A
+083H LOAD R1,[102H]  Load R1 with C, for more condition check
+
+084H IFZER R1,[088H] If C = 0, store value, end
+084H IFNEG R1,[088H] If C < 0, store value, end
+085H SUB R1,[201H]   C--
+086H ADD R0,[101H]   A=A+B
+087H GOTO 084H
+
+088H STORE R0,[100H]
+089H STOP
+
+4a
+Direct Memory Access is a specialised controller, which enables devices to access main memory, bypassing the CPU. Thus, devices can read/write
+to main memory without requesting CPU time, allowing CPU to perform other tasks.

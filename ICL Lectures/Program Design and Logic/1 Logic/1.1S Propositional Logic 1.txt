@@ -1,0 +1,46 @@
+Show: A->B = ~(A^~B)
+(~AvB)
+~~(~AvB)
+~(A^~B)
+
+Show: A<->B = (A^B)v(~A^~B)
+(A->B)^(B->A)
+(~AvB)^(~BvA)
+((~AvB)^~B)v(~AvB)^A)
+((~A^~B)v(B^~B))v((~A^A)v(B^A))
+(~A^~B)v(B^A)
+(A^B)v(~A^~B)
+
+Show: A<->B = ~A<->~B
+(A->B)^(B->A)
+(~AvB)^(~BvA)
+(Bv~A)^(Av~B)
+(~~Bv~A)^(~~Av~B)
+(~B->~A)^(~A->~B)
+(~A->~B)^(~B->~A)
+~A<->~B
+
+Show ~(P<->Q) = (PvQ)^~(P^Q)
+~((P->Q)^(Q->P))
+~((~PvQ)^(~QvP))              Implication
+~((~P^~Q)v(~P^P)v(Q^~Q)v(Q^P) Distributive
+~((~P^~Q)v(P^Q))              Inconsistency
+~(~P^~Q)^~(P^Q)               Double Negation
+(PvQ)^~(P^Q)                  Double Negation
+
+Thief: AvBvC
+A^~B->C = ~(A^~B)vC = ~AvBvC = ~Av(~~BvC) = ~Av(~B->C) = A->(~B->C)
+B->C
+C->~(B->A) = C->~(~BvA) = C->(B^~A)
+
+A     Assume
+~B->C
+B->C
+C     Dilemma
+B^~A  Both B and ~A have to be true)
+      A is inconsistent with ~A
+
+BvC   A is not true
+C->B
+B->C
+B<->C Since at least 1 has to be a thief, and A is not, then B and C are both thieves

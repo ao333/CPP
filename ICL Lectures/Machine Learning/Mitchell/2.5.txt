@@ -1,0 +1,59 @@
+2.1)
+
+Each hypothesis specifies either a required attribute value or "don't care", yielding 4*3*3*3*3*3+1 = 973 possible combinations.
+
+Adding Water-Current as an attribute, which can take on 3 values,
+multiplies the number of possible instances by 3 (3*2*2*2*2*2*3 to get 288) and the number of possible hypotheses by 4 (973*4 3892).
+
+In general, adding an attribute with k possible values, multiplies the number of possible instances by k and the number of possible hypotheses by k+1.
+
+2.5A)
+
+S1:  {<<male brown tall US><female black short US>>}
+G1:  {<<  ?    ?     ?   ?><   ?     ?     ?    ?>>}
+
+S2:  {<<male brown   ?   ?><female black short US>>}
+G2:  {<<  ?    ?     ?   ?><   ?     ?     ?    ?>>}
+
+S3:  {<<male brown   ?   ?><female black short US>>}
+G3:  {<<male   ?     ?   ?><   ?     ?     ?    ?>>,
+      <<  ?    ?     ?   ?><   ?     ?     ?   US>>}
+
+S4:  {<<male brown   ?   ?><female   ?   short  ?>>}
+G4:  {<<male   ?     ?   ?><   ?     ?     ?    ?>>}
+
+2.5B)
+
+Given the single positive example, the consistent hypotheses are those which for each attribute either require the same value in the example, or don't care.  This gives two possibilities for each attribute, for a total of 2^8 = 256 consistent hypotheses.
+
+2.5C)
+
+Once you have a single positive instance, for each attribute a single query may be generated to determine whether or not the specific value for the attribute in the original positive instance is of relevance to the target concept.  To generate such a query, it is sufficient to copy the values from the original positive instance, but change the value of the attribute-in-question to something different.  Such a series of queries
+will be of length equal to the number of attributes, and will assure that the learner will converge to a single, correct hypothesis, given that the hypothesis is expressible in the target language.
+
+For example:
+
+  <<female black short Portuguese><female red   tall   Indian>>
+    ^^^^^^
+  <<male   brown short Portuguese><female red   tall   Indian>>
+	   ^^^^^
+  <<male   black tall  Portuguese><female red   tall   Indian>>
+                 ^^^^
+  <<male   black short French    ><female red   tall   Indian>>
+		       ^^^^^^
+  <<male   black short Portuguese><male   red   tall   Indian>>
+				   ^^^^
+  <<male   black short Portuguese><female black tall   Indian>>
+					  ^^^^^
+  <<male   black short Portuguese><female red   medium Indian>>
+						^^^^^^
+  <<male   black short Portuguese><female red   tall   US    >>
+						       ^^ 
+
+Once a single positive example has been seen, each query will halve the remaining version space.  The number of queries (8) necessary to converge on a single hypothesis is thus log-base-two of the size of the hypothesis space (256, as in part B).
+
+2.5D
+
+Once you start working with a complete hypothesis space in the
+version space framework, you lose all inductive bias, and hence
+the ability to generalize to unseen examples. Therefore, to converge on a single hypothesis, you'd have to generate a query for each possible instance, other than the one already seen, in order to determine whether or not it would be covered by the target concept. Such a sequence would be of length (2*3*3*7)*(2*3*3*7) = 15876.

@@ -1,0 +1,4 @@
+6) ~AX,Y,Z(lecture(X)^lecture(Y)^~same(X,Y)^office(Z)^has(X,Z)^has(Y,Z))
+6) AL,X,Y(lecture(L)^office(X)^office(Y)^~same(X,Y)->~(has(L,X)^has(L,Y)))
+8) AX(phd(X)->EA(office(X)^has(X,A)) ^ AX(phd(X)->EY,Z(phd(Y)^office(Z)^has(Y,Z)^has(X,Z))
+10)

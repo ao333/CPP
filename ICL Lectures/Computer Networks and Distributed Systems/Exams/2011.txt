@@ -1,0 +1,59 @@
+1a
+i) Broadband networks (Physical Layer) uses different frequency bands to transmit analogue data by modulating an analogue carrier wave.
+Channel can be shared among multiple users.
+
+ii) Token Frame (Data Link Layer) that is passed around a ring to allow the host to broadcast dataframes on the medium.
+Sender removes frame on return so that it doesn't congest the ring.
+
+iii) Backwards learning
+Listen to traffic and build address/port tables
+Based on source and destination MAC addresses in the header
+Purges entries that are a few minutes old to keep table up-to-date
+
+iv) 2017:4C
+
+v) TLD (Application Layer): Highest-level DNS names (.com.net.edu.gov.mil.org.cn.ca)
+
+b
+i) ii) iii) 2015:2b
+
+2a
+i) Classless-Inter-Domain routing is method for allocating IP addresses and IP packets.
+Split the world into 4 zones (Europe, N. America, Central/South America and Future Use.
+Size according according to need, not just fixed classes (hence, the name Classless).
+Its goal was to slow the growth of routing tables on routers across the Internet, and to help slow the rapid exhaustion of IPv4 addresses.
+
+ii) A: 0->01111111 (1->127), B: 10->10111111 (128->191), C: 110->11011111 (192-223) SO CLASS C
+
+iii) 1111 1111 1111 1111 1110 0000 0000 0000 -> 13 0s
+2^13 addresses for hosts, less 2 for Network/Broadcast IP 2^13-2=8190
+
+iv) 1111 1111 1111 1111 1110 0000 0000 0000 -> 1111 1111 1111 1111 1111 1000 0000 0000 -> 11 0s
+255.255.248.0
+
+v) 2^11-2 = 2046
+
+2b
+i)
+1) R1 R2 R3 R4 R5 R6 R7
+R1 0  4  55 ?  ?  ?  ?
+R2 4  0  ?  25 ?  ?  ?
+R3 55 ?  0  4  15 ?  ?
+R4 ?  25 4  0  3  ?  ?
+R5 ?  ?  15 3  0  73 ?
+R6 ?  ?  ?  ?  73 0  11
+R7 ?  ?  ?  ?  ?  11 0
+
+2) R1 R2 R3 R4 R5 R6 R7
+R1 0  4  55 29 ?  ?  ?
+R2 4  0  29 25 28 ?  ?
+R3 55 29 0  4  15 88 ?
+R4 29 25 4  0  3  76 ?
+R5 70 27 15 3  0  73 84
+R6 ?  ?  76 88 73 0  11
+R7 ?  ?  ?  ?  84 11 0
+
+3)...
+
+ii) R2-R4 will take infinite time. Thus, the system will loop until a lower cost path is found to R4 through R5, and R2 through R1.
+While the network will not loop infinitely, it will be slow to converge and iterate many times (internet congestion) until a path is found.

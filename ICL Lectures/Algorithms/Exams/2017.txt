@@ -1,0 +1,125 @@
+1a
+i) f(N) <= c*g(N) 
+100sqrtN+4 <= c*2N
+50/sqrtN+2/N <= c
+lim(50/sqrtN+2/N) -> 0<=c -> c exists for every N, True.
+
+ii) X=100sqrt(144)+4=1204 Y=2*144=288, so Choose X
+
+b
+Counting Table
+a5 r5 s5 v5
+3  2  5  6
+3  5  10 16
+2  4  9  15
+1     8  14
+      7  13
+      6  12
+         11
+
+1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16
+a5 a5 a5 r5 r5 s5 s5 s5 s5 s5  v5  v5  v5  v5  v5  v5
+
+c
+Fare1 = min(Out[1]+min(Rtn[5 to N]))
+Fare2 = min(out[2]+min(Rtn[6 to N]))
+i) Each of Out[i]+Rtn[i+4 to N] is a subproblem which will allow us to choose the cheapest ticket for a given outbound time. Each solution
+can be solved by computing each fare as illustrated above. Choosing the overall lowest fair will give us the problem solution.
+
+ii) Dynamic programming can be used to store the result of each min(Rtn(i+4 to N]) since it's partially repeated every iteration.
+
+1) Create Out, Rtn and MinRtn arrays
+
+2) Compute MinRtn
+for i
+  for j
+MinRtn[i] = min(Rtn[i],Rtn[j])
+
+3) Compute minimum fare
+for i
+   fare = min[out[i]+MinRtn[i])
+     if fare < minfare
+       minfare = fair
+   return minfare
+
+2a
+i)
+Worst case is O(N) if the tree looks like a list, and the node to be added is smaller than all nodes in the tree. (Assuming max heap).
+Best case is Omega(1) if the node to be added is larger than the root, and the root does not have a right child.
+
+ii) Since Red-Black are balanced BSTs, so it has to iterate through the height of tree each time, thus O(logN).
+
+iii) If BST is shaped like Red-Black, then the BST is balanced. Thus, insertion into BST is constant. However,
+the Red-Black tree might have to recolor/rotate to to conform to the 4 rules. Thus, Red-Black will take longer on a constant Theta(1).
+
+b
+i) Hash tables generally have more objects M to store than available array slots N.
+Thus, a hash function might hash two different values to the same N, resulting in a collission (2 values vying for 1 spot).
+
+ii)
+Chaining: The next value hashed to the same slot will be added to a linked list pointed to that slot.
+Probing: The next value hashed to the same slot will be added to the next available slot whose distance is defined by the hash function.
+
+iii)
+Chaining inserts on average and worst case Theta(1) because adding to a linked list is constant time.
+Probing will insert on average N/m while worst is still O(N) (probing until the end of array to find an insertion spot).
+
+iv)
+Sort the keys -> hash each key -> get the object -> put it on the list
+*Fetching N items from a hash table takes Theta(N) time, but sorting the keys takes O(NLogN) time, so O(NLogN) overall.
+
+3a
+i)
+1) Construct a graph with list C as edges, [ex,ey] as destination, and [x,y] as starting point.
+2) Use BFS with an array keeping track of "finished" nodes.
+3) The array with "finished" nodes is toplogically sorted, and therefore will give us the shortest path to the end. Alternatively,
+you can find the shortest path by going backwards from the end. Either way, traversing the array built by BFS will be Theta(Step) time.
+
+ii) BFS: Remove once per vertex from priority Q + Add twice per edge to priority Q so O(V+E)
+
+b
+i) Dijkstra assumes if all weights are non-negative, adding an edge can never make a path shorter.
+That's why picking the shortest candidate edge (local optimality) always ends up being correct (global optimality)
+
+?=Infinite, start from a
+  b  c      d      e
+1 ?  ?      10     12
+2 ?  10-1=9 12-3=9 12 (a reaches e with 12, and d with 10. Dijkstra would therefore ignore paths from e since 10 is already a
+local minimum. However, with the introduction of -3, it's possible to get 9 to d, a global minimum.
+
+ii)
+  b   c   d   e
+1 ?   ?   10a 12a
+2 ?   13b 9e  12a
+3 10c 12d 9e  12a
+4 9c  12d 9e  12a
+
+iii) if d,c is reduced from 3 to 1, then b can be reached from a in 7 and c in 10. Note that other nodes will not be affected only
+b and c can be reached from d,c and one cannot abuse the negative weights by forming a cycle.
+
+4a
+i)
+1) Create heap (Place array values into a tree)
+2) Heapify (Maintain Max Heap property by swapping parent with child if parent is smaller)
+3) Swap root (max value) with last node and remove max value (considered sorted)
+4) Recursively call heapify again but with 1 fewer value (the removed root)
+5) Ends when there's one value left (whole array sorted)
+
+ii) The best, average and worst case for heapsort are all NLogN. The reason why is because the heapify step. Regardless, of which node is
+inserted, the parent-child comparison will occur for all levels, thus LogN. Heapify will be called N times to sort each item, thus NLogN.
+
+b
+i)
+if l < r
+  p = HoarePartition(a, l, r)
+  quicksort(A, l, p)
+  quicksort(a, p + 1, r)
+
+ii) iii)
+On an array that is already sorted, Hoare's method never swaps, as there are no misplaced pairs, whereas Lomuto's method still does its
+roughly n/2 swaps! Consider an array filled with 0s. Hoare's method performs a swap for every pair of elements,
+which is the worst case for Hoare's partitioning - but i and j always meet in the middle of the array.
+Thus, we have optimal partitioning and the total running time remains in O(nlogn).
+
+For Lomuto, the comparison A[j] <= x will always be true, so we do a swap for every single element! Even worse,
+after the loop we always have i=n, so we observe the worst case partitioning, making the overall performance degrade to Theta(n^2)!

@@ -1,0 +1,40 @@
+1. AX(G(X)vS(X)->GP(X))
+2. G(Martin)vS(Martin)
+  3. G(Martin)vS(Martin)->GP(Martin) 1,AE
+  4. GP(Martin)                      3,4,->E
+
+1. AX(message(X)->encrypted(X))
+2. AX(encrypted(X)->secure(X))
+  3. message(m)->encrypted(m)   1,AE
+  4. encrypted(m)->secure(m)    2,AE
+5. message(m)->secure(m)        3,4,->I
+6. AX(message(X)->secure(X))    5,AI
+
+5. message(m)   Assume
+6. encrypted(m) 3,5,->E
+7. secure(m)    4,6,->E
+
+E-Elimination
+1. EX(m(X)^p(X))
+  2. m(f)^p(f)   Assume
+  3. p(f)        2^E
+  4. EX(p(X)     3,EI
+5. p(X)          1,2,4,EE
+
+1. EX(hack(X,f)
+2. AX,F(hack(X,F)->stolen(X,F)vhelp(X))
+  3. hack(s,f)                          Assume
+  4. AF(hack(s,F)->stolen(s,F)vhelp(s)) 2,AE
+  5. hack(s,f)->stolen(s,f)vhelp(s)     4,AE
+  6. stolen(s,f)vhelp(s)                3,5,->E
+7. EX(stolen(X,f)vhelp(X)               6,EI
+
+1. AX(p(X)->m(X)vn(X))
+2. AX(m(X)->EYq(X,Y))
+3. AX(n(X)->EYq(x,Y))
+4. p(a)
+  5. p(a)->m(a)vn(a)   1,AE
+  6. m(a)vn(a)         4,5,->E
+  7. m(a)->EYq(a,Y)    2,AE
+  8. n(a)->EYq(a,Y)    2,AE
+9. EYq(a,Y)            6,7,8,Proof By Cases

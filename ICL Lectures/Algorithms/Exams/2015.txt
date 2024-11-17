@@ -1,0 +1,153 @@
+1a
+i) Parent: K/2, Left Child: K*2, Right Child: K*2+1
+
+ii)
+Add
+1 Append node to Heap/Array
+2 Check if Parent > Child
+3 If not, swap Child with Parent
+4 Loop until Child < Parent or becomes Root (Index 0)
+Remove
+1 Remove Root (Index 0)
+2 Swap last Element with Root
+3 If Parent < Child
+3 Swap with the larger child
+4 Loop until Parent > Child or becomes leaf (Index N)
+
+b
+i) Probing is the method in which hash functions use to resolve collisions by inserting an object at a certain available space.
+
+ii) Given a hash table with m slots, a hash function produces uniform hashing if, for an unknown key k, the probability that the probe
+sequence of k is p, where p is a permutation of h0, . . . , m ? 1i is the same for all such p. Each probe is to a random slot, with
+probability N/m it is occupied If N is proportional to m, expected time for insert (and search) is T(1).
+
+Linear probing inserts values at the the next consecutive space thus indicies close to each other have a higher than random probability of
+filling up.
+
+iii) For linear probing, when you delete you only mark the entry as deleted. When inserting you can re-use a deleted entry, but when
+searching, you cannot stop on a deleted entry. If you do lots of insertions and deletions, then over time you accumulate deleted entries that
+count against the load factor. Thus performance degrades to O(n), even if the actual load remains low.
+
+With linked list chaining, insert/delete are T(1) if the entire dataset is not on one chain (worst case).
+
+iv) The average search/remove time for a chained hash table is the load factor O(N/m) (where N is the number of objects and m is the number
+of slots). This means that when the max load factor is reached, (High N/Low M), collision resolution is at its highest, degrading
+performance. Waiting until the max load factor is reached before copying, results in the new table having a condensed, collision-prone block
+too, even if the overall m is expanded. Thus, it is advisable to expand the table, before max load factor is reached, for even distribution.
+
+v) Professor Alfaman isn't rehashing his table when he copies it over so he doesn't have simple uniform hashing which means the average
+running time of search is > O(N/m). Rehashing using a uniform hashing function when he doubles the size would achieve O(N/m) performance.
+
+2a
+i) BigO(Worst/Upper): 0 <= f(N) <= c*g(N), Omega (Lower/Best): 0 <= c*g(N) <= f(N), Theta(Tight/Fixed): 0 <= c1*g(N) <= f(N) <= c2*g(N)
+This means that N^2 is the lower bound, or best case of the algorithm.
+
+ii) 0 <= LogN+2 <= c*LogN/2 | Since Log is always positive, we only have to prove that LogN+2 <= c*LogN/2
+c=>[LogN+2]/[LogN/2]=>[LogN+2]*[2/LogN]=>[2LogN+4]/LogN -> lim(2+(4/LogN)) -> c=>2 True
+
+b
+i)
+1 Quick/Merge Sort A O(NLogN), then see if adjacent numbers are same O(N), for time complexity of O(NLogN+N) or O(NLogN).
+2 Create a hashset O(N), then use the .contains method to check for duplicates O(1), for time complexity of O(N+1) or O(N).
+
+ii) Convert ASCII to Ints, then use counting sort Theta(N). Check for same adjacent numbers T(N), for time complexity T(N+N) or T(N).
+*Note that hashtable/set are O(N), not T(N).
+
+c
+i) A sequence of N increments results in k checks+assignments (while loop), thus O(kN)
+
+ii) INCREMENT N times                 N
+procedure INCREMENT(B, k)
+  i = 0                               1
+  while i < k and B[i] == 1 do        k
+    B[i] = 0                          k
+    i = i + 1                         k
+  if i < k then                       1
+    B[i] = 1                          1
+
+Thus, the overall time complexity is O(N(3k+3)) which simplifies to O(kN)
+
+iii) k=4, Inc=Add 1 or Carry 1 bit to left, Flip=Flip current bit to 0
+#  Bin   Cost Operation     Key Avgs
+0  0000  1    1 Inc         1/1=1
+1  0001  2    1 Flip,1 Inc  3/2=1.5
+2  0010  1    1 Inc
+3  0011  3    2 Flip,1 Inc  7/4=1.75
+4  0100  1    1 Inc
+5  0101  2    1 Flip,1 Inc
+6  0110  1    1 Inc
+7  0111  4    3 Flip,1 Inc  15/8=1.875
+8  1000  1    1 Inc
+9  1001  2    1 Flip, 1 Inc
+10 1010  1    1 Inc         
+11 1011  3    2 Flip, 1 Inc
+12 1100  1    1 Inc
+13 1101  2    1 Flip, 1 Inc
+14 1110  1    1 Inc
+15 1111  5    4 Flip, 1 Inc 31/16=1.9375
+16 10000
+*It can be seen that the logrithmic cost curve is approaching a limit of 2 as evidenced by the key averages.
+Thus a constant amortized cost of 2 "dollars" is adquate to cover all costs without going into debt (negative cost).
+Over time, the complexity can be tightly bound to Theta(N).
+
+3a
+  Relax    A  B   C   D   E
+0          0  Inf Inf Inf Inf
+1 AB,AC,AD 0  7A  2A  9D  Inf
+2 CB,CD,CE 0  7A  2A  3C  12C  
+3 DA,DC,DE 0  7A  2A  3C  4D
+4 EB       0  6E  2A  3C  4D
+
+b
+Topological sort, insists that parents be "finished" before child. However, DFS visits children first, and then recursively finish with their
+parent, on the way back. This means that if we want a "Parent first, Child later" sorted format, DFS's Finish order has to be reversed.
+BFS does find parents before children, so it's already topologically sorted. Reversing BFS would make it wrong instead. 
+
+c
+i) Reverse Kruskal: Sorting Edges (ELogE), Disjoint sets (LogV), Build MST Loop (ELogV) -> ELogV
+
+ii)
+T is spanning
+Line 5 guarantees this, since no edge will be removed that causes T to be disconnected
+T is acyclic
+If T is still connected after removing an edge e, then we have removed an edge from cycle in T (since if u and v are still connected after
+removing edge (u,v), then we have removed an alternative path between u and v. We attempt to remove all edges unless it makes T
+disconnected - therefore we have identified all possible cycles, and removed them.
+T is minimal
+Since we sort the edges and remove them, at every iteration, we are removing the highest weight edge in some cycle C (since this is the
+highest weight edge in our graph that is part of a cycle). We now use the property given to us: if C is a cycle in G, and e is the highest
+weight edge in C, then e is not in any MST of G. At iteration i, we have a graph Gi, starting with the full graph G0, and we remove an
+edge e not in any MST of Gi. Therefore an MST of Gi is contained in Gi+1, and an MST of Gi+1 is also an MST of Gi. At the final iteration,
+we end up with a graph Gfinal, by induction, an Gfinal contains an MST of G0(the full graph). Since Gfinal is a tree (acyclic), it is MST.
+
+4a
+Bottom Up. E[i] is the memoized max earning for working i hours. P[i] is the earning for working duration i.
+E[0] = 0
+for i = 1 to N
+  for j = 1 to i
+    E[i] = max(P[j] + E[i-j])
+return E[N]
+
+E[0]=0
+E[1]=max(P[1]+E[0]=1+0=1)=1
+E[2]=max(P[1]+E[1]=1+1=2,P[2]+E[0]=6+0=6)=6
+E[3]=max(P[1]+E[2]=1+6=7,P[2]+E[1]=6+1=7,P[3]+E[0]=8+0=8)=8
+E[4]=max(P[1]+E[3]=1+8=9,P[2]+E[2]=6+6=12,P[3]+E[1}=8+1=9)=12
+E[5]=max(P[1]+E[4]=1+12=13,P[2]+E[3]=6+8=14,P[3]+E[2]=8+6=14,P[5]+E[0]=12)=14
+E[6]=max(P[1]+E[5]=1+14=15,P[2]+E[4]=6+12=18,P[3]+E[3]=8+8=16,P[5]+E[1]=12+1=13)=18
+E[7]=max(P[1]+E[6]=1+18=19,P[2]+E[5]=6+14=20,P[3]+E[4]=8+12=20,P[5]+E[2]=12+6=18,P[7]=15)=20
+E[8]=max(P[1]+E[7]=1+20=21,P[2]+E[6]=6+18=24,P[3]+E[5]=8+14=19,P[5]+E[3]=12+8=20,P[7]+E[1]=15+1=16,P[8]=20)=24
+
+4b \Java\Dynamic Programming\Fibonacci
+
+c
+Merge/Quicksort do not have "overlapping subproblems" and "optimal substructure" since the sorts we recursively break down the array into
+smaller pieces that do not overlap. we never operate over the same elements of the original array twice during any given level of the
+recursion. This means there is no opportunity to re-use previous calculations.
+
+Dijkstra though, is an example of dynamic programming, as it re-uses prior computations to discover the shortest path between two nodes A
+and Z. Say that A's immediate neighbors are B and C, we can find the shortest path from A to Z by summing the distance between A and B
+with our computed shortest path from B to Z; and do similarly for finding the shortest path from C to Z.
+Then the shortest path from A to Z will be the shorter of these two paths.
+
+d \Imperial-Solutions\5 Algorithms\2.2S Divide and Conquer

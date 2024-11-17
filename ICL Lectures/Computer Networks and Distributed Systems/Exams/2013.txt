@@ -1,0 +1,162 @@
+1a 2015:2b
+
+b
+The Inter-frame Gap is the interval between successive frames from the same host. It allows other hosts to use medium (Initial frame can be
+transmitted immediately). Bandwidth of medium, frame size, framing method/protocol.
+
+c
+1) Increased collision since by the time other packets listen and confirm idleness on the network, another frame would have been sent.
+2) If the time difference is large enough to exceed the preamble, other packets may wrongly interpret the data in packets with low frame gap.
+
+d
+Fairness depends on the MAC strategy. Statica allocation using TDM, FDM and CDMA, is not fair because the bandwidth is guarenteed upon
+connection. Dynamic allocation methods like CSMA/CA is not fair, because A can continously hog the channel, starving B by not allowing it to
+receive CTS. CSMA/CD is fair, because all senders back-off after collision. Token passing can be fair depending on implementation.
+
+e *Bad Question
+Layer       | Advantage                      | Disadvantage
+Data Link   | LLC - CRC/FEC Error Correction | Collision Detection/Avoidance may result in back-offs and delays
+Transport   | TCP - reliability, error correction, flow and congestion control, security | UDP
+Application | Programmer Controlled          | No influence over protocol/congestion at lower levels
+
+2a
+Listen to traffic and build address/port tables based on source and destination MAC addresses in the header. Purges entries that are a few
+minutes old to keep table up-to-date
+
+b
+i) Routing Information Protocol (RIP) sends packets to all neighbours except source unless packet seen before (add sequence number to remove
+loops). Implemented as Router maintains table of distances (vectors) usually hops/delay/queue length to destination network. Periodically
+exchanges this information with neighboursRe-computes distance and updates its tables
+
+ii)
+Distance Vector
+Router maintains table of distances (vectors)
+  Usually hops/delay/queue length to destination network
+  Periodically exchanges this information with neighbours
+  Re-computes distance and updates its tables
+Poor efficiency
+  Slow to converge after changes (especially ”bad news”), Main reason for its demise
+  Count-to-infinity problem
+  Distance vectors increase linearly with network size and may not fit inside packet
+Route finding suboptimal
+  Only considers delay or hop count not bandwidth of links
+  Routing tables do not include paths
+
+Link State
+Each router maintains (partial) map of network
+  Consists of more than just neighbours
+  Includes cost metrics (e.g. distance, delay, bandwidth, cost)
+Properties
+  Faster convergence and more reliable
+  Less bandwidth intensive than distance vector routing but more complex and memory/CPU intensive
+Variants used today: IS-IS (Intermediate System to Intermediate System) and OSPF (Open Shortest Path First)
+Each router does the following:
+  Discover identities of all neighbours through HELLO packets
+  Set/measure metric of link to neighbours (automatic or set by administrator)
+  Send this information to all other routers (Link State packet)
+  Also, receive Link State packets from other routers
+  Compute shortest path to every other router using Dijkstra’s algorithm
+When link state changes
+  Notification packet flooded throughout network
+  All routers re-compute routes
+
+iii)
+Disadvantage: Inefficient and leads to high load on network.
+Advantage: Shortest path and fast discovery. Extremely robust (data is delivered if there is at least one path)
+
+c i) Two iterations.
+1 A   B   C   D
+A 0   1   ?   1
+B 1   0   2   ?
+C ?   2   0   100
+D 1   ?   100 0
+
+2 A   B   C   D
+A 0   1   3   1 *AB+BC=1+2=3   
+B 1   0   2   2 *BA+AD=1+1=2
+C 3   2   0   4 *CB+BC=2+1=3 CB+BA+AD=1+2+2 < CD=100
+D 1   2   4   0
+
+ii) If the path between A and B breaks, the edge will be weighted infinity. Thus take 1+100+2 iterations for the router to switch its routing
+from AB to AD-DC-CB. 100+1 iterations to change its path from AB-BC to AD-DC. It will never realize it can't get to B from A, thus it will
+keep iterating until infinity, or until it reaches a hard-coded cap, hence the "count-to-infinity" problem.
+
+3a
+At-Least-Once: the system will retry on failure until it receives a reply confirming successfully invocation or timeout.
+bool call (request, reply) {
+  int retries = n;
+  while(retries--) {
+    send(request);
+    if (receive(reply,T)) return true; }
+  return false; // return false if timeout; }
+
+At most once: will not attempt a retry (or will ensure that there is a negative acknowledgement of the invocation before retrying).
+  request_sent = false
+  while not request_sent:
+    send RPC
+    request_sent = true
+    wait for acknowledgement with timeout
+    if acknowledgment received and not acknowledgement.is_successful:
+      request_sent = false
+*An example case where you want to do "at-most-once" would be something like payments (you wouldn't want to accidentally bill someone's credit
+card twice), where an example case of "at-least-once" would be something like updating a database with a particular value (if you happen to
+write the same value to the database twice in a row, that really isn't going to have any effect on anything). You almost always want to use
+"at-least-once" for non-mutating (a.k.a. idempotent) operations; by contrast, most mutating operations (or at least ones that incrementally
+mutate the state and are thus dependent on the current/prior state when applying the mutation) would need "at-most-once".
+
+b
+// Remote Object Implementation
+import java.rmi*;
+public class Operator extends UnicastRemoteObject implements iOperator{
+  public Operator() throws RemoteException{ super(); }
+  public boolean report (int room, int status){
+    if (status==disabled) return true;
+    return false;
+  }
+}
+// Remote Object Implementation
+public class MD extends UnicastRemoteObject implements MotionDetector{
+  public MD() throws RemoteException{ super(); }
+  public boolean detect() {
+    if{// detects someone){
+      // reset motion detector status
+      return true;
+    }
+    return false;
+  }
+}
+// Server Implementation
+public class OperatorServer{
+  public static void main(String args[]){
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    Registry r = Locateregistry.getRegistry();
+    try {
+      iOperator O = new Operator();
+      r.rebind("rmi://localhost/OService",O);
+    } catch (Exception e)
+  }
+}
+// Client Implementation
+import java.rmi*;
+import iOperator;
+import MotionDetector;
+import iSwitch;
+import iKeyboard;
+import iDisplay;
+public class RoomController{
+  public static void main(String args[]){
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    Registry r = LocateRegistry.getRegistry(“remotehost”);
+    int roomNum = args[1];
+    string OPserver = args[2];
+    try{
+      iOperator O = (iOperator) r.lookup("rmi://remotehost/OService");
+      iSwitch S = new Switch(); // Local
+      iKeyboard S = new Keyboard(); // Local
+      iDisplay S = new Display(); // Local
+      While(status){
+      if(O.report(roomNum,MD.detect);
+      thread.sleep(5000);
+    } catch (Exception e)
+  }
+}

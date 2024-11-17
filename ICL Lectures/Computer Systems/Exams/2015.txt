@@ -1,0 +1,85 @@
+1a
+i) Sign and Magnitude: Find positive binary -> If negative, flip the leftmost bit: 0010 1101 -> 1010 1101
+ii) One's Complement: Find positive binary -> If negative, flip bits: 0010 1101 -> 1101 0010
+iii) Two's complement: One's Complement -> If negative, add 1 to the One's Complement: 1101 0010 -> 1101 0011
+iv) Excess 64: Add Excess to decimal -> Find the binary: -45+64=19 -> 0001 0011
+
+b
+High Order Interleave: Read module bits first, resulting in adjacent row addresses coming from the same module.
+This allows different devices to access different modules concurrently, allowing for parallel operation and thus higher performance.
+Low Order Interleave: Read row bits first, resulting in adjacent row addresses coming from interleaving modules.
+This allows the same device to access adjacent addresses in parallel. Higher performance if CPU can pre-fetch adjacent memory locations.
+
+c
+i) (A+A)' -> A' Indempotent
+ii) NOR1(A+A)'=A', NOR2(B+B)'=B', NOR3(A'+B')' -> A*B Demorgan
+iii) (A+B)' -> A+B Negation
+
+d
+Convert 52 to binary: 2^5+2^4+2^2 -> 11 0100
+Convert 0.3 to binary: 1.2/4 -> 1.6/32 -> 1.2/64 -> 1.6/512 -> 0100 1100....
+Normalize: 1.1010001001100....*2^5
+Significand: 1010 0010 0110 0110 0110 011
+Exponent: 5+127=132 -> 2^7+2^2 -> 1000 0100
+Combined with Sign: 1100 0010 0101 0001 0011 0011 0011 0011
+Hex: C2513333
+
+2a
+i) Operation Code or Address (Register can be replaced by Address)
+ii) Register Operand: Both stored in general purpose registers
+Immediate (Constant) Operand: One is encoded directly into the instruction
+Memory Operand: Stored in memory through the expression [Baseregister + Scale*Indexregister + Displacement]
+Immediate is fastest because no look-up is required. Register is faster than memory because it is not stored in faster CPU cache.
+iii) Instruction is brought into Ri with the code.
+Control unit checks if register i is 0.
+If 0, the memory address of the instruction will be loaded into the program counter.
+One can also include ALU info which does the testing (comparison).
+iv) Jumps typically have a conditional flag allowing the program to jump to a different address if the flag tests true, although one can also
+jump unconditionally. This can be used to create a nested function call by jumping "backwards" and then executing statement calls in order.
+Jump will, eventually be bypassed due to some condition which is also how while and for loops work. Jump is also used to end a nested loop.
+Jump acts like a GOTO whereas CALL acts more like a function call.
+
+b
+100H A[0]          Value of A[0]
+150H A[n-1]        Value of A[n-1]
+
+200H 100H          Address of A[0]
+250H 150H          Address of A[n-1]
+
+081H LOAD R0,200H  Load address of A[0] (100H) into R0 (for incrementing)
+082H LOAD R1,250H  Load address of A[n-1] (150H) into R1 (for decrementing)
+083H LOAD R2,[R0]  Load value of A[0] into R2
+084H LOAD R3,[R1]  Load value of A[n-1] into R1
+085H STORE R3,[R0] Store A[0] into A[n-1]
+086H STORE R2,[R1] Store A[n-1] into A[0]
+087H INC R0        Increment the address (index) of R0 (101H)
+088H DEC R1        Decrement the address (index) of R1 (149H)
+089H JGT R1,R0,83H If address of R1 > R0, keep looping by jumping to 083H
+08AH STOP          STOP program
+
+3d (Assume 1byte=8bits)
+Each block contains 2^13/2=2^12, 2^14/2=2^13, 2^15/2=2^14 pointers
+Max size: 2^12*8KB=32768KB, 2^13*16KB=131072KB, 2^14*32KB=524288KB
+
+e
+i) Block Linkage: 2KB=2^11B=2048-2bytes per cluster. 2500th byte is on the second cluster, thus 2 reads are required.
+FAT: Best Case: 2 (1 FAT + 1 Cluster). Worst Case: 3 (1 FAT + 2 Clusters)
+ii) 555000/2046=271.2. This means that the byte in question is on the 272nd cluster or 272 reads.
+FAT: The 555000th byte is on 555000/2048=270.996 or 271 blocks. 1 FAT can hold 2^11/2=1024 blocks, so 1 FAT is enough.
+Best Case: 2 (1 FAT + 1 Block), Worst Case: 272 (271 FAT + 1 Block)
+
+4a
+A Translation Look-aside Buffer is a hardware memory cache that stores recently used page-frame number translations for faster retrieval.
+It speeds up address translation by not having to access the main memory twice (once by the page table and once for the actual data).
+
+b
+Effective Access Time = 2*Memory Access Time + TLB Access Time - Memory Access Time * Hit Ratio = 2*200+10-200*0.97=216ns
+
+c
+i) Max Address Space: 64MB=2^26bits -> 26 bits are required in an address to find a specific address in the entire address space
+ii) Page Size: 4096B=2^12bits, Max Physical Memory: 16MB=2^24bits -> 2^26/2^12=2^12=16384 entries
+iii) Page 13086/4096=3.19 (Page 3, thus Frame 6) with offset 13086%4096=798. So virtual address 13086 maps to physical address
+6*4096+798=25374, Page 21200/4096=5.18 (Page 5, thus X 205). This generates a page fault, requiring content to be swapped from disk to memory.
+*iv) How many bits are required for each page table entry?
+There can be at most 2^24/2^12=2^12 frames in main memory, so a page table entry will require 12 bits for a frame number,
+plus protection, valid-invalid and reference bits.

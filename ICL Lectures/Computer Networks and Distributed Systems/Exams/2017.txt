@@ -1,0 +1,207 @@
+1a Christian
+p = (T1 - T0 - h)/2
+(234 - 220 - 2)/2 = 6
+(262 - 250 - 2)/2 = 5
+(307 - 274 - 2)/2) = 15.5
+15.5 is outlier, thus (6+5)/2=5.5ms
+
+b NTP
+P = ((T2-T1) - (T4 - T3))/2
+Train->Workstation->TimeServer->Satellites->Train = 10+5+10+10=35
+(360km/h)*35ms=360000/(60*60*1000)*35=3.5
+*Berkley/Lamport
+
+c
+// Remote Object Implementation
+public interface Report extends UnicastRemoteObject implements IReport {
+  public Report() throws RemoteException { super(); }
+  public static void main(String args[]) {
+    if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+    Registry r = Locateregistry.getRegistry();
+    try {
+      iReport R = new Report();
+      r.rebind("rmi://wks.rail.com/RServ",R);
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+
+  boolean reportPosition(int TrainId, float position) throws RemoteException {
+    float MDS=8.2
+    trainPos[trainId] = getConvertCurrentPosition();
+    for(int i=0; j<R.size(); i++)
+      for(int j=0; j<R.size(); j++)
+        if(i=j) continue;
+        else if(trainPos[i]-trainPos[j]<MDS) return true;
+    return false;
+  }
+}
+// Local Objection Implementation
+public interface Notify implements INotify{
+  void notifyWarning(){
+    System.println("Warning. Too Close. Change Course");
+}
+// Client Implementation
+public class Train {
+  public static void main(String args[]) {
+    try{
+      if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+      Registry r = LocateRegistry.getRegistry("wks.rail.com");
+      iReport R = (iReport) r.lookup("rmi://wks.rail.com/RServ",R);
+      
+      Timer t = new Timer( );
+      t.scheduleAtFixedRate(new TimerTask() {
+        @Override
+        public void run() {
+          R.reportPosition(trainId,getConvertCurrentPosition());
+        }, 1000,20000);
+      }
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+}
+// Client Implementation
+public class Workstation {
+  public static void main(String args[]){
+    try{
+      if(System.getSecurityManager()=null) System.setSecurityManager(new RMIsecurityManager());
+      Registry r = LocateRegistry.getRegistry("wks.rail.com");
+      iReport R = (iReport) r.lookup("rmi://wks.rail.com/ReportService",R);
+      iNotify N = new Notify();
+    
+      if(R.reportPosition()==true) N.notify();
+    } catch (Exception e) System.out.println("Exception: " + e);
+  }
+}
+
+3a
+IP addresses are divided into A,B,C,D,E classes. Classe A starts its 32 bit IP Address with 0. Each subsequent addresses prefixes an
+additional 1 in front. 216 = 2^7-2^6-2^4-^2^3 = 110 11000. 110 is class C
+
+b
+Class A has 24 bits for host, B has 16 bits, C has 8 bits. All 0 is Network ID and 1 is Broadcast ID, not allowed. Thus 2^8-2=254 Addresses
+
+c
+192 = 2^7-2^6 = First 2 of 8 bit host addresses are 1. 2^2=4 subnets and 2^(8-2)-2=62 hosts per subnet.
+
+d
+216.0.0.128 = 2^7 = 10 (Cannot change network bits, or use all 0s or 1s). Thus 1000 0001 to 1011 1110 -> 126.0.0.129 to 126.0.0.190.
+Broadcast would be all 1 for non-network part: 1011 1111 -> 126.0.0.191
+
+e
+10.0.0.0/8 -> 10.255.255.255
+172.16.0.0/12 -> 172.31.255.255
+192.168.0.0/16 -> 192.168.255.255
+
+NAT translates Internal/Private address, to External/IP Addresses. Routes internal network using Gateway box with external and internal
+address. Box maintains this mapping for incoming traffic (replies). Port mappings maintained on gateways to make services on private hosts
+available to public hosts.
+
+Solutions for limited IP Addresses
+  Applicant needs to show that addresses will be utilised
+  Allocate networks with subnet masks
+  Classless Inter-Domain Routing (CIDR)
+  Reuse addresses in different parts of network (Network Address Translation)
+  Add more address bits IPv6
+
+f
+Dynamic Host Configuration Protocol (DHCP)
+Host broadcasts request for IP address (DHCP DISCOVER packet)
+DHCP server allocates free IP address and sends it to host
+  IP addresses are chosen from pool
+  DHCP OFFER packet
+Uses Ethernet address of the DHCP DISCOVER packet
+  IP addresses are only leased for a fixed period of time
+  Host must renew the lease before it expires or IP is returned to the pool
+Other information DHCP is used for
+  IP address of the default gateway including network mask
+  IP addresses of name servers and time servers
+  Can be extended by custom fields
+
+4a
+Host A                    Host B
+Connection Establishment
+      SYN/SEQ=X>
+      <SYN/SEQ=Y,ACK=X+1
+      SYN/SEQ=X+1,ACK=Y+1>
+Data Transfer         
+      SEQ=0/2000bytes>
+      <ACK2000/WIN7000
+      SEQ=2000/2000bytes>
+      <ACK4000/WIN5000
+      SEQ=5000/1000bytes>
+      <ACK5000/WIN4000
+Connection Release
+      FIN/SEQ=X>
+      <FIN/SEQ=Y,ACK=X+1
+      ACK/ACK=Y+1>
+*Retransmission, 0 used for simplicity (use an offset)
+
+b
+Time Division Multiplexing (TDM): 231 231... Used in telephone networks, TV schedule
+  Subdivide channel into fixed time slots
+  Encode many signals by transmitting them at different times (round-robin fashion)
+Consider:
+  Whole bandwidth of the channel usable for duration of slot but input signals must have less than medium bandwidth / number of channels
+  Introduces delay while waiting for slot (Gap between slots must not interfere with requirements)
+  Someone must allocate time slots
+  Needs synchronisation to keep track of slots
+  Fixed allocation bad for bursty data
+
+Frequency Division Multiplexing (FDM): Used in radio, TV, GSM2
+  Encode different signals by sending at different frequencies
+Consider:
+  Need guard bands because filters imprecise
+  Someone must allocate frequencies to users
+
+Code Division Multiple Access (CDMA): Satellite Transmission
+  Imagine many groups having conversations in same room
+    TDM: taking turns to talk
+    FDM: talking in isolated groups not heard by others
+    CDMA: everyone talking in different languages
+  Stations transmit over entire frequency spectrum
+  Stations combine data bits with own code sequence
+  Interference between signals occurs
+  Separation made using coding theory
+Consider:
+  Interference needs to be controlled
+  Requires sophisticated signal power management (everyone can talk as long as no one talks too loudly)
+  Soft degradation as number of stations increases
+  Only practical for communication with central station
+
+c
+Address Resolution Protocol (ARP)
+  Hosts maintain lookup tables (e.g. hash tables) of IP/data link address mappings for LAN
+  If host A has no entry for host B
+    A broadcasts ARP Request requesting data link address for B’s IP address
+    B recognises its IP address and returns ARP response with its data link address
+  Usual method on IP networks that use Ethernet
+  Hosts cache these tables
+    B also adds A’s mapping to its own table (Likely to need it in future exchanges)
+
+d
+OSI           TCP/IP      
+Application   Application
+Presentation
+Session
+Transport     Transport
+Network       Internet
+Data Link     Link
+Physical
+
+Physical Layer Services
+  Transmission of bit-stream over medium (provides communication path between nodes)
+  Encodes data according to signalling standards
+  Connectors and cables defined
+Data Link Layer Services
+  Arranges data into bit stream for sending over physical link
+  Data encoded in transmission frames
+  Low-level flow and error control for single hop
+  Possible services to network layer: Unacknowledged CL,
+  Acknowledged CL, Acknowledged CO
+Network Layer Services
+  Provides end-to-end transmission of data
+  Uses data link layer to provide transmission over single hops
+  Global addressing and routing
+  Hides differences in underlying networks
+Application Layer
+  Provides interface to application but but does not include the application
+  Most users only have contact with application layer
+  Protocols for common application interactions are for example: file transfer, e-mail, web, IM, video telephony

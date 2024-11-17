@@ -1,0 +1,83 @@
+1a
+i) Theta(N) denotes that the time complexity is bounded to N, or will always run N times.
+
+ii) It is possible for X to have a faster time complexity given that Theta(N) is its worst. However, even with better input,
+it may just be faster by a constant factor, which still simplifies to Theta(N).
+
+iii) C1*gN <= FN <= c2*gN
+c1*2N <= 7N+5 <= c2*2N
+
+c1<=(7N+5)/2N -> lim(3.5+2.5N) -> c1<=3.5 True
+(7N+4=5)/2N<=c2 -> lim(3.5+2/N) -> 3.5<=C2 True
+
+b
+Since quicksort recurses twice every call, or logN times, new stack frames have to be allocated each time in the average and worst case.
+While mergesort also recurses twice every call, it has an additional "merge" call at the end, which uses an auxiliary array,
+making the space complexity O(N). Quicksort partitions in-place, while mergesort merges to an auxiliary array.
+
+c \Git\Java\Dynamic Programming\GreatestSumContinuousSubarray.java
+
+2a
+i) Assuming minimal collision (low load factor) and uniform hashing, average search time O(1) (the constant operation of a hash function)
+can be achieved using hashtables.
+
+ii) To maintain constant insertion time, load factor (N/m) has to be kept low, and N should be distributed unformly over m. On average,
+insertion takes O(1). However, if the above conditions are not met, it can become O(N),
+traversing the entire size of the table, or to the end of a linked list to insert the next element.
+
+iii) Assume strings are in ASCII
+1) We change the insertion function to hash each string by multiplying (sum will collide) the int value of each of its ASCII character.
+2) If two insertions collide (hash to the same index), then we have an anagram. This will be resolved by linked list chaining.
+3) During search, we will read every linked list chain (collided strings) from the same key/index.
+
+3a
+4,2,6,-8,5,23,7,46,36 (Read each level from left to right assuming max heap and larger children are added to the right)
+
+b
+i) Adding duplicates to the left child
+Procedure Add (A,x)
+  k=0 // Root index
+  While(A!=Null) // Loop until the end of array
+    if(A[k]<=x) // If inserted value is smaller or equal to parent
+      A[k/2]=x // Add to left child
+    A[k/2+1]=x // Else add to right child
+*Alternatively, we can include a count with every node, indicating the number of duplicates. Slightly harder to implement.
+
+ii) Both procedures are theoretically O(Height) or O(LogN). However, adding duplicates to trees result in more nodes and thus a taller
+tree, making the runtime worse. Using the suggested duplicate counter method, only a few constant operations need to be added to the base
+binary search tree insertion operations, making it faster than adding duplicate nodes.
+
+4a
+found = new int[g.vertices] // change bool to int array to record number of times a finished node is traversed
+for v in g
+  if not found[v]
+    DFS(g, v, found)
+
+for v in g.adj[s]
+  found[s] +=1 // Add 1 everytime a found node is touched, to find sum.
+  if not found[v]
+    DFS(g, v, found)
+
+b
+i)
+AB 1
+FH 1
+CF 2
+DE 2
+AH 3
+BC Cycle
+BF Cycle
+BG 4
+GH Cycle
+GF Cycle
+CD 7
+EF Cycle
+HI 10
+
+ii) Not true. Looking at i) We can see that BC is 3, and is the minimum edge of cycle BGF (3-4-5).
+However, even if it was shorter, adding a redundant edge that does not reach a previously unreachable edge violates the MST rule.
+
+c
+Bellman-Ford should be chosen because we have control over the number of iterations. We can limit the number of iterations to Q,
+even if it is less than V-1, thus not giving us optimal results. However, Dijkstra will not even find a path if we limit its iterations.
+Note that the positive weighted graph is to trick you into choosing Dijkstra.

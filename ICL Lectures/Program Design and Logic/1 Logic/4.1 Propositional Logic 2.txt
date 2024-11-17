@@ -1,0 +1,84 @@
+Show A->B, B->C |- A->C
+1. A->B
+2. B->C
+  3. A  Assume
+  4. B  1,3,->E
+  5. C  2,4,->E
+
+Show Q->R |- (P->Q)->(P->R)
+1. Q->R
+  2. P->Q         Assume
+    3. P          Assume
+    4. Q          2,3,->E
+    5. R          1,4,->E
+  6. P->R         3,5,->I
+7. (P->Q)->(P->R) 2,6,->I
+
+Show X->Y |- ~Y->~X (Contraposition)
+1. X->Y
+  2. ~Y   Assume
+    3. X  Assume
+    4. Y  1,3,->E
+  5. ~X   3,4,2,RAA
+6. ~Y->~X 1,5,->I
+
+Show XvY, X->Z, Y->Z |- Z (Proof by cases)
+1. XvY
+2. X->Z
+3. Y->Z
+  4. ~Z  Assume
+    5. X Assume
+    6. Z 2,5,->E
+  7. ~X  5,6,4,RAA
+  8. Y   Assume
+    9. Z 3,8,->E
+  10. ~Y 8,9,4,RAA
+  11. Y  1,7,Inconsistency,vE
+12. Z    10,11,4,RAA
+
+Show snow,mild->~snow |- ~mild 
+1. snow
+2. mild->~snow
+  3. mild      Assume
+  4. ~snow     2,3,->E
+5. ~mild       3,4,1,RAA
+
+Prove Elections
+1. E->LvT
+2. ~U->~L
+3. E
+  4. ~T   Assume
+  5. L    vE
+  6. L->U Contraposition
+  7. U    6,->E
+8. ~T->U  4,7,->I
+
+Prove Elections 2
+1. L
+2. ~U->~L
+
+  3. ~U     Assume
+  4. ~L     2,3,->E
+5. U        3,4,1,RAA
+
+  3. ~~Uv~L Implication
+  4. Uv~L   Double Negation
+  5. ~LvU   Commutative
+  6. L->U   Implication
+7. U        1,7,->E
+
+  3. ~~Uv~L Implication
+  4. ~~U    1,3,Lv~L tautology, forcing ~~U to be True in OR Truth Table 
+5. U        4,Double Negation
+
+  3. ~~L    1,Double Negation
+  4. ~~U    1,3,Modus Tollens
+5. U        4,Double Negation
+
+Exercise C: Show CutvTaxvPR
+1. TvLvD
+2. T->Cut
+3. L->Tax
+4. D->PR
+5. TvLvD->CutvTaxvPR (2,3,4,A)
+6. CutvTaxvPR (1,5,->E)

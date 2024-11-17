@@ -1,0 +1,11 @@
+Convert the following formulas to CNF (conjunctive normal form).
+(p ^ q) or ~(p or q)
+((P -> Q) & ~Q) 0> ¬P    answer (P or Q or ¬P) ^ (~Q or Q or ~P)
+(~Q -> ~P) -> (P -> Q)    answer (~Q or ~P or Q) ^ (P or ~P or Q)
+(P ^ Q) ? (~P<=>Q)       answer ~P or ~Q
+
+Prove the following using resolution. (Negate the conclusion, convert all formulas to CNF
+and then try to prove a contradiction.)
+
+P ^ Q |- P or Q
+P or Q, Q -> (R ^ S), (P or R) -> U |- U

@@ -1,0 +1,251 @@
+1a
+Feature            | POP      | IMAP      | Winner
+Emails Stored      | Local    | Server    | Depends on Privacy/Convenience
+Mail Backup        | Local    | ISP       | Depends on Privacy/Convenience
+Sync/Accessible    | Local    | Anywhere  | IMAP
+Mutiple Mailboxes  | No       | Yes       | IMAP
+Partial Message DL | No       | Yes       | IMAP
+Emails Read        | Offline  | Online    | POP
+Connect Time       | Short    | Long      | POP
+Storage Limit      | No       | Eventual  | POP
+Implementation     | Simple   | Complex   | POP
+*Multipurpose Internet Mail Extensions (MIME) has 7-bit ASCII text, designed exclusively for English
+
+b
+Feature      | Circuit                   | Packet                          | Winner
+Delivery     | In order                  | Out-of-order                    | Circuit
+Bandwidth    | Guarenteed                | Variable                        | Circuit
+Bandwidth    | Unused Bandwidth Wasted   | Uses what's required            | Packet
+Node Failure | Connection Breaks         | Reroutes                        | Packet
+Congestion   | Slow Connection           | Packets delayed, out-of-order   | Depends
+Charge       | Time                      | Packet                          | Depends
+Overhead     | Initial Connection Set-up | Every Packet Addressing/Control | Depend on Transfer Size
+
+c
+DNS is not really needed if one can memorize digit strings, and can update thousands of IP addresses changes, locally or rely on a central
+server that may be down when one's homework is due. WWW may not be neccessary since we have other internet applications like mail, and cate.
+Nonetheless, the DNS can dynamically resolve IP addresses using DHCP, administer domain names to avoid conflict, and to build hierachical
+domains suffixes that have meaning. Its distributed nature improves reliability.
+The second UDP query likely benefited from DNS caching. The DNS server likely responded to the second request with a stored response whose TTL
+has yet to expire, instead of iteratively querying other DNS servers again for a resolution.
+
+d
+Why UDP
+ Fast/bursty transfers which costs more bandwidth if a guarenteed connection is established (DHCP)
+ Requests that does not require confirmation (like DNS)
+ Real-time applications where the past is irrelevant are robust to packet losses or delay/out-of-order delivery like VoIP and streaming videos
+ Multi/Broadcast: A host cannot establish connections with everyone
+ UDP packets can be reorganized into different protocols imitating certain TCP features like checksum
+ Less CPU processes due to less router and data processing overheads
+Why TCP
+ Big files that have huge overhead if transfered packet-by-packet (Establishing a connection with data stream is more efficient)
+ Important transfers that make use of full duplex (sequence/acknowledge number detects loss/duplicates and ensures orderly delivery)
+ Fast senders should pause for slow receivers to prevent buffer overflows
+ Detects congestion by monitoring packet loss caused by store-forwarding (drops packets if buffer becomes full)
+ Establishes flow control by using the smaller of receiver or congestion window. Measures RTT using timeouts.
+ Secure SSH connections
+
+e
+Wireless communication is prone to noise and collision, thus packet loss. TCP regards packet losses as network congestion and will therefore
+reduce the window and rate of transfer. More reliability can be added by utilizing the Logical Link Control to detect(CRC/Odd Bit) or correct
+errors(FEC). Packets can be framed with count/flags to detect loss.
+
+2a
+Networks need to choose when and how much resources to give mediums based on contention, fairness access latency. They can be allocated
+statically with bounded latency to transmit like TDM, FDM and CDMA, but that leads to wasted bandwidth. Dynamically allocating resources
+on demand leads to collision and contention using CSMA or lower performance using Token Passing.
+
+b
+CSMA/CD (Collision Detection)
+  Listen to channel while sending
+  If collision, abort signal immediately
+  Wait random time and try again
+Properties
+  Does not waste channel sending broken frames
+  Gives unbounded time to access network
+  Designed for fair access
+Ensure sender still sending when collision noise arrives
+  Must send for twice the propagation delay
+802.3 allows for 2.5 km max LAN (with repeaters)
+  Specifies minimum frame length that takes at least 50µs to propagate (includes 4 repeaters)
+  Assuming 100 ns transmission delay for sending 1 bit (10 Mbps link), this means at least 500 bits, rounded up to 512 (safety), hence the pad
+(7 + 1 + 2 + 2 + 2 + 46 + 4) ? 8 = 512 bits
+  Takes 51.2µs on a 10 Mbps link
+  Time to detect collision over longest network while still transmitting
+Must avoid repeated collisions At nth retry, wait between 0 and 2^n?1 slot times (51.2µs)
+  Do this up to a maximum of 1023 slot times
+  Give up on 16th collision
+Properties
+  Low delay if frames of 2 hosts collide
+  Reasonable delay if frames of many hosts collide
+Hidden terminal problem
+  Signals from A and C collide (at B) but A and C cannot hear each other to avoid the collision
+Exposed terminal problem
+  B and C falsely conclude that they
+  cannot send at the same time
+
+CSMA/CA (Collision Avoidance)
+  sender and receiver initially exchange short frames other stations can overhear
+  RTS (Ready to Send) - request the channel
+  CTS (Clear To Send) - response to RTS frame
+Other stations (A, D) hear exchange (RTS and/or CTS)
+Stations infer for how long the channel will be busy (RTS and CTS frames include the size)
+ACK (Acknowledgement) - sent on receipt of frame (provides efficient collision recovery)
+Repeated failures to transmit result in greater back-off time
+Diagram:\3 Data Link Layer:34
+  Station with frame to transmit senses medium and waits until it is idle
+  When idle, wait for back-off time
+  If still idle, transmit data
+  If busy, wait until idle and then wait for back-off time
+  Back-off time is adjusted exponentially and influenced by IFS (see next slide) and overheard RTS/CTS frames
+  Distributed Coordination Function (DCF) as stations act independently
+  Collisions are costly as the entire frame is transmitted
+
+c
+*Assuming no retransmission, HTTP/1.0 auto closes connections and requires a new 3-TCP-packet handshake for every request:
+3(Initial Handshake) + 2(2 Images)*3(Handshake)*2(SEQ/Data+ACK/WIN) + 1(text)*3*2 = 21
+HTTP/1.1 allows for a single presistent connection for multiple requests, plus 3 more for client-initiated connection release:
+3(Initial Handshake) + 2*2 + 1*2 + 3(connection release)= 12
+
+d
+i) HTTP is an application layer protocol used by WWW to define message (image/text/etc) format and transmission. It also defines interactions
+between servers and browsers. It establishes a TCP connection with a server and use GET/POST/PUT or other methods to request/send information.
+It identifies users and maintains state through cookies. 
+
+ii) Switches and Bridges operate on Data Link Layer. It listens to traffic and builds address/port table mappings based on source and
+destination MAC addresses in the header using loop-free spanning tree. It purges entries that have their TTL expired. If source port, don't
+forward. If port for destination MAC known, forward only to that port, else flood all but source port to find destination.
+They used to join LANs together, thus forming the ends of collision domains and administration. When speeds between different networks
+differ, it can store and forward (check CRC) or Cut-through (No Check). All this adds transmission and processing delays.
+
+iii) Subnets exist on the network layer to help reduce network complexity by breaking it into local networks to assist in traffic routing and
+harmonize differences between different protocols, technologies, and administrative ownerships.
+
+iv) Address Resolution Protocol is a network layer protocol used for translating IP into data link layer addresses, since data link layer
+Network Interface Cards do not understand (are transparent to) network layer IP addresses. NIC manufacturers request 48-bit Ethernet
+Addresses from the IEEE to avoid conflict when similar cards appear on the same LAN. It works by allowing hosts to main lookup tables of
+IP/data link address mappings for LAN. If host A has no entry for host B, A broadcasts ARP requests requesting the data link address for B's
+IP address. B recognizes its IP address and returns an ARP response with its data link address.
+
+3a
+Confidentiality: Prevent disclosure of information to unauthorised users + prevent analysis of traffic characteristics.
+Integrity: Prevent modification of information by unauthorised users – includes no duplication, replays, insertions or reordering.
+Availability: Prevent denial of service e.g. by disruption
+
+Identification: Establishing the identity of the subject using Name, ID provided by user, Workstation address, Magnetic/Smart card
+Prevention: Use name/initials not numbers, Same ID for ALL systems & email, Individual accountability, unique ID for each user Identify users
+in logs and audit trails, No sharing of ID
+
+Authentication: Validity of the identity of sender or server. Personal Identification Number (PIN) for cards, Passwords, Biometrics eg. retina
+or fingerprint scanning, Maximum authentication attempts (e.g.3), Logging and investigation of all authentication failures.
+Prevention: Based on challenge-response protocols where the authenticated party needs to prove knowledge/possession of a secret. Host
+generates random number r which is sent to Smart Card. Card uses one way function F, seeded with cryptographic key K and PIN number to
+calculate response which is sent back to host. Host uses same function to check response. Not susceptible to replay
+Access Control: Control over who has access to services or resources within the system. Network, Operating System
+
+Passive Attack: Observe information in network without interference. Breaks confidentiality by analyzing message content, traffic frequency/
+length/source/destination
+
+Active Attack: Modify message contents or message stream – Delete, delay, reorder, replay, insert valid or invalid messages, Masquerade as
+authorised user, Denial of service by flooding servers with valid requests, Passwords gained through passive attack can be used for attack
+
+b
+i) Packet Filtering Routers (a.k.a. Chokes, Screening Filters) drops packets based on the destination/source addresses/ports, type field of IP
+packets. For performance reasons, IP filtering is usually performed by a process within the operating system kernel of a router. If multiple
+firewalls are used, the first marks certain packets for more exhaustive examination by a later firewall, allowing ‘clean’ packets to proceed.
+It is possible to filter based on sequences of IP packets, for example, to prevent access to an FTP server before a login has been performed.
+
+ii) Circuit-level Gateways that provide higher-level processing e.g. authenticating users, cleaning/redirecting data, logging, and
+auditing/accounting. Gateway apps normally run on BASTION HOSTS. Can drop connections based on destination, incorrect connection
+packets, time, volume. Normally used for Inside-to-Outside connections. Client normally recompiled to connect to CL-Gateway port.
+
+iii) Application-level Gateways acts as a proxy for an application process. Like CL-GW’s but application-specific (app-knowledgeable). It can
+block/filter/report based on app-level msg content, scan for data leaks, viruses, etc, rewrite data, be configured to limit application
+features but with more processing overhead than CL-GW’s. For example, a policy may be desired that allows certain internal users to make
+Telnet connections to certain external hosts. When a user runs a Telnet program on their local computer, it attempts to establish a TCP
+connection with a remote host. The request is intercepted by the TCP gateway. The TCP gateway starts a Telnet proxy process and the original
+TCP connection is routed to it. If the proxy approves the Telnet operation (i.e., if the user is authorized to use the requested host) it
+establishes another connection to the requested host and relays all of the TCP packets in both directions. A similar proxy process would run
+on behalf of each Telnet client, and similar proxies might be employed for FTP and other services. 
+
+4a
+Security manager is needed only when RMI downloads code from the remote machine. If both client and server use the same classes, it's not
+needed. If an RMI program does not install a security manager, RMI will not download classes (other than from the local class path). This
+restriction ensures that the operations performed by downloaded code are subject to a security policy. It is needed in server and in client if
+stub is loaded from server. Checks various operations performed by a stub to see whether they are allowed access files, link to dynamic
+libraries, control virtual machine, manipulate threads, or perform priviledged operations.
+
+b
+Remote Procedure Call makes remote calls look like local ones. Client is suspended until the call completes. Parameters must be passed by
+value since Client and Server processes do not share memory and thus Client pointers have no meaning in Server address space, encode the
+parameters and method name in messages, and to decode them when receiving. Client has a local stub for every remote procedure it can call.
+Server has a local skeleton for every procedure which can be called by a remote client. Stub procedures perform: Parameter marshalling
+(packing/assemble parameters in communication system messages), Unpacking received messages and assigning values to parameters, Transform data
+representations if necessary, Access communication primitives to send/receive messages. Binding/IDL. While RPC encapsulates via OS processes,
+RMI seeks to do it through objects. RMI = RPC + Object-orientation
+RMI's Advantages over RPC:
+
+i) RPC calls remote functions exported into a server. RMI uses references to remote objects to invoke their methods, and also pass and return
+more remote object references that can be distributed among many JVM instances, so it's much more powerful.
+
+ii) RMI support inheritance, allowing interfaces to extend, evolve, specialise behaviour. Can replace existing object and still be compatible
+with clients. RPC must have identical interfaces (no inheritance).
+
+iii) Parameterised exceptions -> Simpler error handling.
+
+iv) type checking -> fewer errors
+
+v) Access transparency: Remote and local services accessed by same method/syntax
+
+vi) Location transparency: A user could access files from servers or locally in the same way. (Write once, write everywhere)
+
+c
+i) bool call (request, reply) {
+   send(request);
+   return receive(reply,Time) // returns false if timed out
+}
+Maybe Call Semantics: If the call fails, the client cannot tell for sure whether the procedure was executed, whether request/reply were
+lost or the server crashed. If the call succeeds, the procedure will have been executed exactly once if using a communication service which
+does not generate duplicate messages. It's lightweight but leaves issues of state consistency of the server. With respect to the client, up to
+the application programmer.
+
+ii) bool call (request, reply) {
+    int retries = n;
+    while(retries--) {
+      send(request);
+      if (receive(reply,Time)) return true; }
+    return false; // return false if timed out;
+}
+At-Least-Once retries up to n times. if the call succeeds then procedure has been executed at least once but server may receive up to n
+duplicated messages. Useful for idempotent server operations i.e they may be executed many times and have the same effect on server state as a
+single execution.
+
+iii) At-Most-Once guarantees that the remote procedure is either never executed or executed partially (due to a server crash) or once. To do
+this, the server must keep track of request identifiers and discard retransmitted requests that have not completed execution. On the other
+hand, the server must buffer replies and retransmit until acknowledged by the client. Most RPC systems guarantee at-most-once semantics in
+the absence of server crashes.
+
+iv) Transactional (Zero or Once) guarantees that either the procedure is completely executed or it is not executed at all. To ensure this, the
+server must implement an atomic transaction for each RPC i.e., either the state data in the server is updated permanently by an operation
+taking it from one consistent state to another or it is left in its original state, if the call is aborted or a failure occurs. This requires
+two phase commit type of protocol.
+
+d
+include projectrank.idl
+main(){
+  status = export(projectrank,"rankserver",docnameserver);
+  status = RPCServerListen();
+  ranked = A dictionary where the keys are [studentid]. Values default to [false] to indicate that no votes have been cast
+  rankings = A 2D array where the indexes are [studentid][projectid] and the values are myrank
+}
+rank(studentid,projectid,myrank){
+  if !ranked[studentid]{
+    ranked[studentid]=true;
+    myrank[studentid][projectid] = myrank;
+  } else do nothing or send warning as students can only rank once and cannot change their rankings
+}
+listrank(studentid,projectid,myrank){
+  myrank = rankings[projectid][studentid];
+}
+Both of these operations are idempotent in that one or more execution have the same effect, so they can be repeated.
+Consequently they can be used with at-least-once semantics.
